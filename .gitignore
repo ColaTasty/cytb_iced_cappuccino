@@ -24,6 +24,4 @@ Homestead.json
 .idea/php.xml
 .idea/vcs.xml
 .idea/webServers.xml
-composer.lock
-composer.lock
-*.lock
+./composer.lock
