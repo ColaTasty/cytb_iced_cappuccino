@@ -11,6 +11,6 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::any("/","IndexController@index");
+Route::get("/laravel","IndexController@laravel");
+Route::get("/test","IndexController@test");
