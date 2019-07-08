@@ -11,6 +11,6 @@
 |
 */
 
-Route::any("/","IndexController@index");
+Route::any("/","IndexController@laravel");
 Route::get("/laravel","IndexController@laravel");
 Route::get("/test","IndexController@test");
