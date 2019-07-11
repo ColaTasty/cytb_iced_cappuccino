@@ -25,3 +25,4 @@ Homestead.json
 .idea/vcs.xml
 .idea/webServers.xml
 composer.lock
+database.php
