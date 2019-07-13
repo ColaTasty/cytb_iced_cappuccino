@@ -13,4 +13,22 @@
 
 Route::any("/","IndexController@laravel");
 Route::get("/laravel","IndexController@laravel");
-Route::get("/test","IndexController@test");
+
+/**
+ * 测试
+ */
+Route::prefix("test")->group(function (){
+    Route::any("/","IndexController@test");
+    Route::get("db","IndexController@testDB");
+    Route::get("json","IndexController@testJson");
+    Route::get("get","IndexController@testGet");
+    Route::get("post","IndexController@testPost");
+    Route::get("url-encode","IndexController@testUrlEncode");
+});
+
+/**
+ * 微信小程序
+ */
+Route::prefix("wxapp")->group(function (){
+    Route::any("login/{js_code?}","WxappController@wxappLogin");
+});
