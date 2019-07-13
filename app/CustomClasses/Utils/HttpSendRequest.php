@@ -78,7 +78,7 @@ class HttpSendRequest
     public function send()
     {
         curl_setopt($this->curl, CURLOPT_HTTPHEADER, [
-            'Content-type: application/json'
+            'Content-type:application/json'
         ]);
         curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, TRUE);
         //***关闭SSL验证***

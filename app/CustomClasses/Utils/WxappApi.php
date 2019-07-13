@@ -24,10 +24,8 @@ class WxappApi
         $tmp_url_id = str_replace("[APPID]",$app_id,self::$urls["login"]);
         $tmp_url_secret = str_replace("[SECRET]",$app_secret,$tmp_url_id);
         $api_url = str_replace("[JSCODE]",$js_code,$tmp_url_secret);
-//        dd($api_url);
         $send = new HttpSendRequest();
         $api_res =  $send->sendGet($api_url)->send();
-        dd($send);
         return $api_res;
     }
 }
