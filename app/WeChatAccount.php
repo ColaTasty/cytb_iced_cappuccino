@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class WeChatAccount extends Model
 {
-//    public $attributes;
     public $timestamps = false;
     protected $table = "WeChatAccount";
     protected $primaryKey = "accountId";

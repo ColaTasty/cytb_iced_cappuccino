@@ -30,5 +30,14 @@ Route::prefix("test")->group(function (){
  * 微信小程序
  */
 Route::prefix("wxapp")->group(function (){
-    Route::any("login/{js_code?}","WxappController@wxappLogin");
+    Route::any("login/{js_code?}","WxappController@WxappLogin");
+    Route::any("home-page-features","WxappController@HomePageFeatures");
+    Route::any("cet/{method}","WxappController@Cet");
+});
+
+/**
+ * 微信公众号
+ */
+Route::prefix("wechat")->group(function (){
+    Route::any("dev-auth","WeChatController@WeChatDevAuth");
 });

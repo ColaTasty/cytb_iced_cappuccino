@@ -20,5 +20,6 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         //
+        "https://makia.dgcytb.com/wxapp/*"
     ];
 }
