@@ -8,6 +8,7 @@
 namespace App\CustomClasses\Utils;
 
 
+
 class HttpSendRequest
 {
     protected $curl;
@@ -32,6 +33,8 @@ class HttpSendRequest
     public function __construct()
     {
         $this->curl = curl_init();
+        curl_setopt($this->curl, CURLOPT_HEADER, false);
+        curl_setopt($this->curl, CURLOPT_ENCODING, "gzip");
     }
 
     public function __get($name)
@@ -42,6 +45,10 @@ class HttpSendRequest
             return null;
     }
 
+    /**
+     * @param string $url
+     * @return $this
+     */
     public function sendGet(string $url)
     {
         $this->method = "GET";
@@ -51,7 +58,11 @@ class HttpSendRequest
         return $this;
     }
 
-    public function sendPostString(string $url)
+    /**
+     * @param string $url
+     * @return $this
+     */
+    public function sendPost(string $url)
     {
         $this->method = "POST";
         $this->request_url = $url;
@@ -60,16 +71,47 @@ class HttpSendRequest
         return $this;
     }
 
-    public function setData(string $data)
+    /**
+     * @param array|string $data
+     * @return $this
+     */
+    public function setData($data)
     {
+        if (!is_string($data))
+            $data = self::dataArrayToString($data);
         $this->request_data = $data;
-        if ($this->method !== "GET")
+        if ($this->method != "GET")
             curl_setopt($this->curl, CURLOPT_POSTFIELDS, $data);
         return $this;
     }
 
-    public function setCookie(string $cookie)
+    /**
+     * @param bool $flag
+     * @return $this
+     */
+    public function needHeader($flag = false)
     {
+        curl_setopt($this->curl, CURLOPT_HEADER, $flag);
+        return $this;
+    }
+
+    /**
+     * @param string $encoding
+     * @return $this
+     */
+    public function setEncoding(string $encoding = "gzip"){
+        curl_setopt($this->curl, CURLOPT_ENCODING, $encoding);
+        return $this;
+    }
+
+    /**
+     * @param array|string $cookie
+     * @return $this
+     */
+    public function setCookie($cookie)
+    {
+        if (!is_string($cookie))
+            $cookie = self::cookieArrayToString($cookie);
         $this->request_cookie = $cookie;
         curl_setopt($this->curl, CURLOPT_COOKIE, $cookie);
         return $this;

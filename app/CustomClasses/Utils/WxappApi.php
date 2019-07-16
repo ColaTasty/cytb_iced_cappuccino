@@ -17,7 +17,7 @@ class WxappApi
         "login" => "https://api.weixin.qq.com/sns/jscode2session?appid=[APPID]&secret=[SECRET]&js_code=[JSCODE]&grant_type=authorization_code"
     ];
 
-    public static function wxappLogin($js_code){
+    public static function WxappLogin($js_code){
         $res = WeChatAccount::find(self::$defaultAccount);
         $app_id = $res->appId;
         $app_secret = $res->appSecret;

@@ -28,7 +28,7 @@ class WxappController extends Controller
             );
         }
 
-        $res = WxappApi::wxappLogin($js_code);
+        $res = WxappApi::WxappLogin($js_code);
 
         $res = json_decode($res);
 
