@@ -93,18 +93,21 @@ class WxappController extends Controller
         );
     }
 
-    private function ModulesLoad($obj, $method)
+    private function ModulesLoad($obj, $method, $params = [])
     {
         if (method_exists($obj, $method)) {
-            return $obj->$method();
+            return $obj->$method($params);
         } else {
-            return response("访问错误[code : 404]", 404);
+            return response(view("error"), 404);
         }
     }
 
-    public function Cet($method)
+    public function Cet($method, $zkz = "")
     {
         $cet = new Cet();
-        return $this->ModulesLoad($cet, $method);
+        $params = [
+            "zkz" => $zkz
+        ];
+        return $this->ModulesLoad($cet, $method, $params);
     }
 }

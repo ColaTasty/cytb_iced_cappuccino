@@ -10,14 +10,29 @@
     <title>访问错误</title>
     <meta http-equiv="content-type" content="text/html"/>
     <style>
-        div{
+        div {
             text-align: center;
             font-size: 24px;
+        }
+        .copyright{
+            width: 100%;
+            position: absolute;
+            bottom: 50px;
+            font-size: 15px;
         }
     </style>
 </head>
 <body>
-<div style="margin-top: 40vh;">{{$msg}}</div>
-<div style="margin-top: 10px;">{{$code}}</div>
+@if(isset($msg))
+    <div style="margin-top: 40vh;">{{$msg}}</div>
+@else
+    <div style="margin-top: 40vh;">访问错误</div>
+@endif
+@if(isset($code))
+    <div>{{$code}}</div>
+@else
+    <div>404</div>
+@endif
+<div class="copyright"><?php echo date("Y",time());?>&nbsp;&copy;&nbsp;城院贴吧&nbsp;&nbsp;</div>
 </body>
 </html>

@@ -17,6 +17,9 @@ class HttpSendRequest
     protected $method;
     protected $request_url;
     protected $request_data;
+    protected $request_header = [
+        'Content-type:application/json'
+    ];
     protected $request_cookie;
     protected $response;
 
@@ -35,6 +38,9 @@ class HttpSendRequest
         $this->curl = curl_init();
         curl_setopt($this->curl, CURLOPT_HEADER, false);
         curl_setopt($this->curl, CURLOPT_ENCODING, "gzip");
+        curl_setopt($this->curl, CURLOPT_HTTPHEADER, [
+            'Content-type:application/json'
+        ]);
     }
 
     public function __get($name)
@@ -75,13 +81,23 @@ class HttpSendRequest
      * @param array|string $data
      * @return $this
      */
-    public function setData($data)
+    public function setPostData($data)
     {
         if (!is_string($data))
             $data = self::dataArrayToString($data);
         $this->request_data = $data;
         if ($this->method != "GET")
             curl_setopt($this->curl, CURLOPT_POSTFIELDS, $data);
+        return $this;
+    }
+
+    /**
+     * @param array $header
+     * @return $this
+     */
+    public function setHeader(array $header){
+        $this->request_header = $header;
+        curl_setopt($this->curl, CURLOPT_HTTPHEADER, $header);
         return $this;
     }
 
@@ -99,7 +115,7 @@ class HttpSendRequest
      * @param string $encoding
      * @return $this
      */
-    public function setEncoding(string $encoding = "gzip"){
+    public function setEncoding(string $encoding){
         curl_setopt($this->curl, CURLOPT_ENCODING, $encoding);
         return $this;
     }
@@ -119,9 +135,6 @@ class HttpSendRequest
 
     public function send()
     {
-        curl_setopt($this->curl, CURLOPT_HTTPHEADER, [
-            'Content-type:application/json'
-        ]);
         curl_setopt($this->curl, CURLOPT_RETURNTRANSFER, TRUE);
         //***关闭SSL验证***
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, 0);

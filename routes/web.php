@@ -32,7 +32,7 @@ Route::prefix("test")->group(function (){
 Route::prefix("wxapp")->group(function (){
     Route::any("login/{js_code?}","WxappController@WxappLogin");
     Route::any("home-page-features","WxappController@HomePageFeatures");
-    Route::any("cet/{method}","WxappController@Cet");
+    Route::any("cet/{method?}/{zkz?}","WxappController@Cet");
 });
 
 /**
