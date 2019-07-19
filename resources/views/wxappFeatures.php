@@ -6,31 +6,31 @@ $feature_list = [[
     "title" => "四六级查询",
     "name" => "CET4/6",
     "url" => "./../cet/cet",
-    "bgColor" => "bg-yellow",
+    "bgColor" => "bg-blue",
     "icon" => "search"
 ], [
     "title" => "我的课表",
     "name" => "schedule",
     "url" => "./../index/index",
-    "bgColor" => "bg-yellow",
+    "bgColor" => "bg-red",
     "icon" => "calendar"
 ], [
     "title" => "吃什么",
     "name" => "lunch/dinner",
     "url" => "./../index/index",
     "bgColor" => "bg-yellow",
-    "icon" => "shopfill"
+    "icon" => "shop"
 ], [
     "title" => "畅谈广场",
     "name" => "Let's talk",
     "url" => "./../index/index",
-    "bgColor" => "bg-yellow",
-    "icon" => "communityfill"
+    "bgColor" => "bg-blue",
+    "icon" => "community"
 ], [
     "title" => "投票器",
     "name" => "Vote",
     "url" => "./../index/index",
-    "bgColor" => "bg-yellow",
+    "bgColor" => "bg-red",
     "icon" => "post"
 ]];
 RC::SetStatus(true);

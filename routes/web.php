@@ -30,9 +30,14 @@ Route::prefix("test")->group(function (){
  * 微信小程序
  */
 Route::prefix("wxapp")->group(function (){
+    // 用户登录
     Route::any("login/{js_code?}","WxappController@WxappLogin");
+    // 主页内容
     Route::any("home-page-features","WxappController@HomePageFeatures");
+    // 四六级
     Route::any("cet/{method?}/{zkz?}","WxappController@Cet");
+    // 解析用户信息
+    Route::any("verify-user-info","WxappController@VerifyUserInfo");
 });
 
 /**

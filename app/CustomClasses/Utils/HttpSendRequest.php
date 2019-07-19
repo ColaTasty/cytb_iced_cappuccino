@@ -8,7 +8,6 @@
 namespace App\CustomClasses\Utils;
 
 
-
 class HttpSendRequest
 {
     protected $curl;
@@ -93,10 +92,18 @@ class HttpSendRequest
 
     /**
      * @param array $header
+     * @param bool $push
      * @return $this
      */
-    public function setHeader(array $header){
-        $this->request_header = $header;
+    public function setHeader(array $header, bool $push = false)
+    {
+        if ($push) {
+            foreach ($header as $item){
+                array_push($this->request_header, $item);
+            }
+        } else {
+            $this->request_header = $header;
+        }
         curl_setopt($this->curl, CURLOPT_HTTPHEADER, $header);
         return $this;
     }
@@ -115,7 +122,8 @@ class HttpSendRequest
      * @param string $encoding
      * @return $this
      */
-    public function setEncoding(string $encoding){
+    public function setEncoding(string $encoding)
+    {
         curl_setopt($this->curl, CURLOPT_ENCODING, $encoding);
         return $this;
     }

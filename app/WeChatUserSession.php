@@ -46,6 +46,10 @@ class WeChatUserSession extends Model
      */
     private function IsUserExist(string $openid){
         $user = WeChatUserSession::where("openid",$openid);
-        return !empty($user);
+        if (empty($user)){
+            return false;
+        }else{
+            return true;
+        }
     }
 }
