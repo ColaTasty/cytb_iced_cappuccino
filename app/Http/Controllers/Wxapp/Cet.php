@@ -8,6 +8,7 @@
 namespace App\Http\Controllers\Wxapp;
 
 
+use App\CetScore;
 use App\CustomClasses\Utils\CetApi;
 use App\CustomClasses\Utils\HttpSendRequest;
 use App\CustomClasses\Utils\ResponseConstructor;
@@ -87,15 +88,29 @@ class Cet
 
         $res = CetApi::Query($zkz, $name, $v, $t, $cookie);
 
-        if ($res == false){
+        if ($res == false) {
             ResponseConstructor::SetStatus(false);
             ResponseConstructor::SetMsg("查询失败，成绩服务器连接出错");
             return ResponseConstructor::ResponseToClient(true);
-        }else{
-            if (isset($res["error"])){
+        } else {
+            if (isset($res["error"])) {
                 ResponseConstructor::SetStatus(false);
                 ResponseConstructor::SetMsg("查询失败");
-            }else{
+            } else {
+                $score_record = new CetScore();
+
+                $record =  $score_record->UpdateScore([
+                    "zkz" => $zkz,
+                    "name" => $name,
+                    "school" => $res["x"],
+                    "read" => $res["r"],
+                    "write" => $res["w"],
+                    "listen" => $res["l"],
+                    "total" => $res["s"],
+                ]);
+
+                $res["recordSuccess"] = empty($record) ? false:true;
+
                 ResponseConstructor::SetStatus(true);
                 ResponseConstructor::SetMsg("查询成功");
             }

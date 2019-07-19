@@ -22,9 +22,9 @@ class WeChatController extends Controller
         $tmpStr = implode($tmpArr);
         $tmpStr = sha1($tmpStr);
         if ($tmpStr === $signature) {
-            return $echostr;
+            return response($echostr);
         } else {
-            return "Identify Failed";
+            return response(view("error",["msg"=>"Identify Failed"]),404);
         }
     }
 }
