@@ -11,7 +11,7 @@ $feature_list = [[
 ], [
     "title" => "我的课表",
     "name" => "schedule",
-    "url" => "./../index/index",
+    "url" => "./website/website?module=calendar",
     "bgColor" => "bg-red",
     "icon" => "calendar"
 ], [
