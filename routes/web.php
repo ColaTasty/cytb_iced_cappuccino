@@ -41,7 +41,7 @@ Route::prefix("wxapp")->group(function (){
     // 解密用户信息
     Route::any("decrypt","WxappController@DecryptSensitiveData");
     // 解析并返回跳转小程序网页
-    Route::any("website","WxappController@Website");
+//    Route::any("website","WxappController@Website");
 });
 
 /**
@@ -49,4 +49,5 @@ Route::prefix("wxapp")->group(function (){
  */
 Route::prefix("wechat")->group(function (){
     Route::any("dev-auth","WeChatController@WeChatDevAuth");
+    Route::any("please-update","WeChatController@PleaseUpdate");
 });
