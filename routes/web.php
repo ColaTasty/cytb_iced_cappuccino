@@ -14,7 +14,7 @@
 /**
  * 网站根
  */
-Route::any("/","IndexController@laravel");
+Route::any("/index","IndexController@index");
 Route::get("/laravel","IndexController@laravel");
 
 /**

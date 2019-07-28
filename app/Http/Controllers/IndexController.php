@@ -10,7 +10,7 @@ class IndexController extends Controller
 {
     public function index()
     {
-        echo "hello world";
+        return response("你好！",302,["Location"=>"https://dgcytb.com/wx"]);
     }
 
     public function laravel()

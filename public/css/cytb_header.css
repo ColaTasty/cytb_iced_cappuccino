@@ -18,7 +18,8 @@
 }
 
 .copyright {
-    height: 20vh;
+    width: 100%;
+    height: 100px;
     text-align: center;
     font-weight: bold;
     font-size: 14px;
@@ -34,4 +35,15 @@
 
 .cytb-direction .direction {
     font-size: 30px;
+}
+
+.cytb-tmp-input,
+#tmp-input {
+    position: fixed;
+    top: -50px;
+    left: -50px;
+}
+
+.cytb-tr:hover{
+    background-color: #DDDDDD;
 }

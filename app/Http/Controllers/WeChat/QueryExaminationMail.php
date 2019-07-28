@@ -7,6 +7,7 @@
 namespace App\Http\Controllers\WeChat;
 
 use App\CustomClasses\Utils\HttpSendRequest;
+use App\WeChatQueryExaminationMail;
 
 class QueryExaminationMail
 {
@@ -21,6 +22,10 @@ class QueryExaminationMail
         "get_mail_num" => "https://ems.emspost.com.cn/new-generation-logistics/mail/queryMailNumByTicket"
     ];
 
+    /**
+     * @param $ticket
+     * @return array|bool|mixed|string
+     */
     public function query($ticket)
     {
         $res = $this->getMailNum($ticket);
@@ -30,15 +35,33 @@ class QueryExaminationMail
             return $res;
         }
 
+//        写入数据库
+        $log = new WeChatQueryExaminationMail();
+        $log->Insert([
+            "ticket"=>$ticket,
+            "mail_num"=>$res["mail_num"],
+        ]);
+
         $res = $this->getMailInfo($res["mail_num"]);
 
         if (!$res["isOK"]){
             $res["msg"] = "物流信息服务器出错";
         }
 
+//        写入数据库
+        $log->UpdateDirection([
+            "ticket"=>$ticket,
+            "from"=>$res["mail_info"]->mail->senderCity,
+            "to"=>$res["mail_info"]->mail->receiverCity
+        ]);
+
         return $res;
     }
 
+    /**
+     * @param $ticket
+     * @return array|bool|mixed|string
+     */
     private function getMailNum($ticket){
         $send = new HttpSendRequest();
 
@@ -60,6 +83,10 @@ class QueryExaminationMail
         return $res;
     }
 
+    /**
+     * @param $mail_num
+     * @return array|bool|mixed|string
+     */
     private function getMailInfo($mail_num){
         $send = new HttpSendRequest();
 

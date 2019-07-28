@@ -12,7 +12,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>城院贴吧——查询通知书物流</title>
-    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://makia.dgcytb.com/css/cytb_header.css">
 </head>
 <body>
@@ -34,8 +34,8 @@
 <div class="copyright">
     &copy;&nbsp;<?php echo date("Y");?>&nbsp;城院贴吧
 </div>
-<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
-<script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.js"></script>
+<script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/twitter-bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script src="https://makia.dgcytb.com/js/wechat/query_examination_mail.js"></script>
 </body>
 </html>
