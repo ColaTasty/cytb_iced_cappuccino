@@ -7,6 +7,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\WeChat\QueryExaminationMail;
+
 
 class WeChatController extends Controller
 {
@@ -30,5 +32,21 @@ class WeChatController extends Controller
 
     public function PleaseUpdate(){
         return view("pleaseUpdate");
+    }
+
+    public function QueryExaminationMail($ticket=""){
+        if (empty($ticket) && !isset($_POST["ticket"])){
+            return view("wechat.queryExaminationMail.form");
+        }
+
+        if (isset($_POST["ticket"])){
+            $ticket = $_POST["ticket"];
+        }
+
+        $query = new QueryExaminationMail();
+
+        $res = $query->query($ticket);
+
+        return view("wechat.queryExaminationMail.result",["res"=>$res]);
     }
 }

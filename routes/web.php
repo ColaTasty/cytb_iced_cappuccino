@@ -11,6 +11,9 @@
 |
 */
 
+/**
+ * 网站根
+ */
 Route::any("/","IndexController@laravel");
 Route::get("/laravel","IndexController@laravel");
 
@@ -24,6 +27,7 @@ Route::prefix("test")->group(function (){
     Route::get("get","IndexController@testGet");
     Route::get("post","IndexController@testPost");
     Route::get("url-encode","IndexController@testUrlEncode");
+    Route::get("form","IndexController@testForm");
 });
 
 /**
@@ -50,4 +54,5 @@ Route::prefix("wxapp")->group(function (){
 Route::prefix("wechat")->group(function (){
     Route::any("dev-auth","WeChatController@WeChatDevAuth");
     Route::any("please-update","WeChatController@PleaseUpdate");
+    Route::any("query-examination-mail/{ticket?}","WeChatController@QueryExaminationMail");
 });

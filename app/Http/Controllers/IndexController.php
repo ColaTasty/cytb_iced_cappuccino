@@ -78,4 +78,8 @@ class IndexController extends Controller
         }
         return $str;
     }
+
+    public function testForm(){
+        return response(view("test.form"));
+    }
 }
