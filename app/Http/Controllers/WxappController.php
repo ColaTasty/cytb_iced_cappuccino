@@ -111,13 +111,14 @@ class WxappController extends Controller
         return $this->ModulesLoad($cet, $method, $params);
     }
 
-    public function VerifyUserInfo(){
+    public function VerifyUserInfo()
+    {
 
-        if (strtoupper($_SERVER["REQUEST_METHOD"]) != "POST"){
-            return response(view("error"),404);
+        if (strtoupper($_SERVER["REQUEST_METHOD"]) != "POST") {
+            return response(view("error"), 404);
         }
 
-        if (!isset($_POST["rawData"]) || !isset($_POST["signature"])){
+        if (!isset($_POST["rawData"]) || !isset($_POST["signature"]) || !isset($_POST["openId"])) {
             ResponseConstructor::SetMsg("传入参数出错");
             return ResponseConstructor::ResponseToClient(true);
         }
@@ -128,28 +129,31 @@ class WxappController extends Controller
 
         $openId = $_POST["openId"];
 
-        $user_session = WeChatUserSession::where("openid",$openId)->first();
+        $user_session = WeChatUserSession::where("openid", $openId)->first();
         $session_key = $user_session->sessionkey;
 
-        $res = WxappApi::VerifyUserInfo($rawData,$signature,$session_key,$user_info);
+        $res = WxappApi::VerifyUserInfo($rawData, $signature, $session_key, $user_info);
 
-        if ($res){
+        if ($res) {
             $user = new WeChatUser();
-            $res = $user->UpdateUserInfo($openId,$user_info);
-            if ($res){
+            $res = $user->UpdateUserInfo($openId, $user_info);
+            if ($res) {
                 ResponseConstructor::SetStatus(true);
                 ResponseConstructor::SetMsg("数字签名正确，信息完整");
-                ResponseConstructor::SetData("userInfo",$user_info);
+                ResponseConstructor::SetData("userInfo", $user_info);
+                return ResponseConstructor::ResponseToClient(true);
+            } else {
+                ResponseConstructor::SetStatus(true);
+                ResponseConstructor::SetMsg("数字签名正确，但是写入错误");
+                ResponseConstructor::SetData("userInfo", $user_info);
                 return ResponseConstructor::ResponseToClient(true);
             }
-        }else{
+        } else {
             ResponseConstructor::SetStatus(false);
             ResponseConstructor::SetMsg("数字签名不正确，信息不完整！");
-            ResponseConstructor::SetData("callback",["rawData"=>$rawData,"signature"=>$signature,"sessionKey"=>$session_key]);
+            ResponseConstructor::SetData("callback", ["rawData" => $rawData, "signature" => $signature, "sessionKey" => $session_key]);
             return ResponseConstructor::ResponseToClient(true);
         }
-
-        return "111222333";
     }
 
     public function DecryptSensitiveData($closure = false)

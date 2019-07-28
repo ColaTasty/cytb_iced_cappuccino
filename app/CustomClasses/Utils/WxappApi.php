@@ -17,63 +17,64 @@ class WxappApi
         "login" => "https://api.weixin.qq.com/sns/jscode2session?appid=[APPID]&secret=[SECRET]&js_code=[JSCODE]&grant_type=authorization_code"
     ];
 
-    public static function WxappLogin($js_code){
+    public static function WxappLogin($js_code)
+    {
         $res = WeChatAccount::find(self::$defaultAccount);
 
         $app_id = $res->appId;
 
         $app_secret = $res->appSecret;
 
-        $tmp_url_id = str_replace("[APPID]",$app_id,self::$urls["login"]);
+        $tmp_url_id = str_replace("[APPID]", $app_id, self::$urls["login"]);
 
-        $tmp_url_secret = str_replace("[SECRET]",$app_secret,$tmp_url_id);
+        $tmp_url_secret = str_replace("[SECRET]", $app_secret, $tmp_url_id);
 
-        $api_url = str_replace("[JSCODE]",$js_code,$tmp_url_secret);
+        $api_url = str_replace("[JSCODE]", $js_code, $tmp_url_secret);
 
         $send = new HttpSendRequest();
 
-        $api_res =  $send->sendGet($api_url)->send();
+        $api_res = $send->sendGet($api_url)->send();
 
         return $api_res;
     }
 
-    public static function VerifyUserInfo($rawData,$signature,$session_key,&$user_info){
-        $signature_2 = sha1($rawData.$session_key);
-        if ($signature == $signature_2){
+    public static function VerifyUserInfo($rawData, $signature, $session_key, &$user_info)
+    {
+        $signature_2 = sha1($rawData . $session_key);
+        if ($signature == $signature_2) {
             $user_info = json_decode($rawData);
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public static function DecryptSensitiveData($encryptedData,$iv,$session_key,&$data){
+    public static function DecryptSensitiveData($encryptedData, $iv, $session_key, &$data)
+    {
 
         if (strlen($session_key) != 24) {
             return 40001;
         }
-        $aesKey=base64_decode($session_key);
+        $aesKey = base64_decode($session_key);
 
 
         if (strlen($iv) != 24) {
             return 40002;
         }
-        $aesIV=base64_decode($iv);
+        $aesIV = base64_decode($iv);
 
-        $aesCipher=base64_decode($encryptedData);
+        $aesCipher = base64_decode($encryptedData);
 
-        $result=openssl_decrypt( $aesCipher, "AES-128-CBC", $aesKey, 1, $aesIV);
+        $result = openssl_decrypt($aesCipher, "AES-128-CBC", $aesKey, 1, $aesIV);
 
-        $dataObj=json_decode( $result );
-        if( $dataObj  == NULL )
-        {
+        $dataObj = json_decode($result);
+        if ($dataObj == NULL) {
             return 40003;
         }
 
         $app_account = WeChatAccount::find(self::$defaultAccount);
         $app_id = $app_account->appId;
-        if( $dataObj->watermark->appid != $app_id )
-        {
+        if ($dataObj->watermark->appid != $app_id) {
             return 40003;
         }
         $data = $result;

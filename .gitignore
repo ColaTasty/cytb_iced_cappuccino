@@ -16,6 +16,17 @@ Homestead.yaml
 Homestead.json
 /.vagrant
 .phpunit.result.cache
+
+# we7
+public/web
+public/payment
+public/framework
+public/data
+public/attachment
+public/app
+public/api
+public/api.php
+
 .idea
 .idea/CYTB-IcedCappuccino.iml
 .idea/deployment.xml

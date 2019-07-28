@@ -36,8 +36,12 @@ Route::prefix("wxapp")->group(function (){
     Route::any("home-page-features","WxappController@HomePageFeatures");
     // 四六级
     Route::any("cet/{method?}/{zkz?}","WxappController@Cet");
-    // 解析用户信息
+    // 验证用户信息
     Route::any("verify-user-info","WxappController@VerifyUserInfo");
+    // 解密用户信息
+    Route::any("decrypt","WxappController@DecryptSensitiveData");
+    // 解析并返回跳转小程序网页
+//    Route::any("website","WxappController@Website");
 });
 
 /**
@@ -45,4 +49,5 @@ Route::prefix("wxapp")->group(function (){
  */
 Route::prefix("wechat")->group(function (){
     Route::any("dev-auth","WeChatController@WeChatDevAuth");
+    Route::any("please-update","WeChatController@PleaseUpdate");
 });

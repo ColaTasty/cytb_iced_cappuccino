@@ -27,4 +27,8 @@ class WeChatController extends Controller
             return response(view("error",["msg"=>"Identify Failed"]),404);
         }
     }
+
+    public function PleaseUpdate(){
+        return view("pleaseUpdate");
+    }
 }
