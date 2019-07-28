@@ -79,4 +79,20 @@ class WxappApi
         $data = $result;
         return 0;
     }
+
+    public static function DecryptSensitiveDataErrorMsg($errorCode)
+    {
+        switch ($errorCode) {
+            case 40001:
+                return "用户登录态可能已过期";
+            case 40002:
+                return "初始向量不正确！";
+            case 40003:
+                return "数据不完整或不正确";
+            case 0:
+                return "数据解析成功";
+            default:
+                return " 数据解析失败";
+        }
+    }
 }

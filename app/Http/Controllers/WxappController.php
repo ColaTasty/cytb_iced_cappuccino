@@ -152,7 +152,38 @@ class WxappController extends Controller
         return "111222333";
     }
 
-    public function DecryptSensitiveData(){
+    public function DecryptSensitiveData($closure = false)
+    {
+        if (strtoupper($_SERVER["REQUEST_METHOD"]) != "POST") {
+            return response(view("error"), 404);
+        }
 
+        if (!isset($_POST["iv"]) || !isset($_POST["encryptedData"]) || !isset($_POST["openId"])) {
+            ResponseConstructor::SetMsg("传入参数出错");
+            return ResponseConstructor::ResponseToClient(true);
+        }
+
+        $iv = $_POST["iv"];
+
+        $encryptedData = $_POST["encryptedData"];
+
+        $openId = $_POST["openId"];
+
+        $user_session = WeChatUserSession::where("openId", $openId)->first();
+        $session_key = $user_session->sessionkey;
+
+        $res = WxappApi::DecryptSensitiveData($encryptedData, $iv, $session_key, $data);
+
+        if ($res == 0) {
+            ResponseConstructor::SetData("callback", $data);
+            ResponseConstructor::SetStatus(true);
+        }
+        ResponseConstructor::SetMsg(WxappApi::DecryptSensitiveDataErrorMsg($res));
+
+        if ($closure){
+            return ResponseConstructor::GetResponse();
+        }
+
+        return ResponseConstructor::ResponseToClient(true);
     }
 }
