@@ -25,24 +25,13 @@ class WeChatQueryExaminationMail extends Model
     public function Insert($info){
         $ticket = $info["ticket"];
         $mail_num = $info["mail_num"];
+        $from = $info["from"];
+        $to = $info["to"];
         $updated_at = date("Y-m-d H:i:s");
 
         $res =  $this->updateOrCreate(
             ["ticket"=>$ticket],
-            ["mail_num"=>$mail_num,"updated_at"=>$updated_at]
-        );
-
-        return $res;
-    }
-
-    public function UpdateDirection($info){
-        $ticket = $info["ticket"];
-        $from = $info["from"];
-        $to = $info["to"];
-
-        $res = $this->updateOrCreate(
-            ["ticket"=>$ticket],
-            ["from"=>$from,"to"=>$to]
+            ["mail_num"=>$mail_num,"from"=>$from,"to"=>$to,"updated_at"=>$updated_at]
         );
 
         return $res;

@@ -83,7 +83,7 @@
             </tbody>
         </table>
     </div>
-    <div class="copyright">
+    <div class="cytb-copyright">
         &copy;&nbsp;<?php echo date("Y");?>&nbsp;城院贴吧
     </div>
     <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>

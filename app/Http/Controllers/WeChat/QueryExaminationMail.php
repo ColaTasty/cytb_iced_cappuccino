@@ -30,30 +30,30 @@ class QueryExaminationMail
     {
         $res = $this->getMailNum($ticket);
 
+        $db_data = [];
+
+        $db_data["ticket"] = $ticket;
+
         if (!$res["isOK"]){
             $res["msg"] = "这个准考证还没有物流信息";
             return $res;
         }
 
-//        写入数据库
-        $log = new WeChatQueryExaminationMail();
-        $log->Insert([
-            "ticket"=>$ticket,
-            "mail_num"=>$res["mail_num"],
-        ]);
+        $db_data["mail_num"] = $res["mail_num"];
 
         $res = $this->getMailInfo($res["mail_num"]);
 
         if (!$res["isOK"]){
             $res["msg"] = "物流信息服务器出错";
+            return $res;
         }
 
+        $db_data["from"] = $res["mail_info"]->mail->senderCity;
+        $db_data["to"] = $res["mail_info"]->mail->receiverCity;
+
 //        写入数据库
-        $log->UpdateDirection([
-            "ticket"=>$ticket,
-            "from"=>$res["mail_info"]->mail->senderCity,
-            "to"=>$res["mail_info"]->mail->receiverCity
-        ]);
+        $log = new WeChatQueryExaminationMail();
+        $log->Insert($db_data);
 
         return $res;
     }

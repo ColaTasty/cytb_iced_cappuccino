@@ -20,18 +20,21 @@
     <img id="logo" src="https://makia.dgcytb.com/image/tieba_logo.png">
     <p class="active">查询通知书物流</p>
 </div>
-<form action="/wechat/query-examination-mail/" style="padding: 10px;height: 50vh;" method="post" id="form">
-    @csrf
-    <div class="form-group" style="margin-top: 30px;">
-        <label for="ticket-input">准考证号</label>
-        <input type="number" class="form-control" name="ticket" id="ticket-input" aria-describedby="ticketHelp" placeholder="">
-        <small id="ticketHelp" class="form-text text-muted">输入有效的准考证号</small>
-        <div class="buttons" style="padding-left: 10px;padding-right: 10px;margin-top: 20px">
-            <button type="button" id="sub" class="btn btn-primary btn-lg btn-block">查询</button>
+<div style="height: 200px">
+    <form action="/wechat/query-examination-mail/" style="padding: 10px;height: 50vh;" method="post" id="form">
+        @csrf
+        <div class="form-group" style="margin-top: 30px;">
+            <label for="ticket-input">准考证号</label>
+            <input type="number" class="form-control" name="ticket" id="ticket-input" aria-describedby="ticketHelp"
+                   placeholder="">
+            <small id="ticketHelp" class="form-text text-muted">输入有效的准考证号</small>
+            <div class="buttons" style="padding-left: 10px;padding-right: 10px;margin-top: 20px">
+                <button type="button" id="sub" class="btn btn-primary btn-lg btn-block">查询</button>
+            </div>
         </div>
-    </div>
-</form>
-<div class="copyright">
+    </form>
+</div>
+<div class="cytb-copyright">
     &copy;&nbsp;<?php echo date("Y");?>&nbsp;城院贴吧
 </div>
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.min.js"></script>
