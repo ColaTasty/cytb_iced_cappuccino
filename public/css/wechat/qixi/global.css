@@ -1,0 +1,65 @@
+@import url(https://makia.dgcytb.com/css/loading.css);
+
+/** 背景图 **/
+body {
+    background-image: url("https://makia.dgcytb.com/image/qixi_background.jpg");
+    background-repeat: no-repeat;
+    background-position-x: 40%;
+    background-position-y: 25%;
+}
+
+/** nav **/
+.cytb-nav-logo {
+    height: 32px;
+    margin: 8px;
+}
+
+.cytb-nav-title {
+    display: inline-block;
+    font-size: 18px;
+    position: relative;
+    padding-top: 3px;
+}
+
+.cytb-nav-title .cytb-label {
+    display: inline-block;
+    position: absolute;
+    margin-left: 4px;
+    top: 3px;
+    margin-top: 5px;
+    padding: 2px 2px 2px 2px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    font-size: 12px;
+}
+
+/** carousel **/
+.cytb-carousel {
+    height: 360px;
+    /*margin-top: 5px;*/
+    /*padding-top: 15px;*/
+    /*padding-bottom: 15px;*/
+    background-color: rgba(196, 188, 196, 0.24);
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.cytb-carousel img {
+    width: 72%;
+    margin: 0 auto;
+}
+
+.cytb-bg-blue {
+    background-color: #003be9;
+    color: #EEEEEE;
+}
+
+.cytb-bg-black {
+    background-color: #353535;
+    color: #EEEEEE;
+}
+
+.cytb-bg-pink {
+    background-color: #e720ee;
+    color: #FFFFFF;
+}

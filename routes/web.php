@@ -52,7 +52,17 @@ Route::prefix("wxapp")->group(function (){
  * 微信公众号
  */
 Route::prefix("wechat")->group(function (){
+//    开发者网站授权
     Route::any("dev-auth","WeChatController@WeChatDevAuth");
+//    请升级微信
     Route::any("please-update","WeChatController@PleaseUpdate");
+//    查询录取通知书邮件
     Route::any("query-examination-mail/{ticket?}","WeChatController@QueryExaminationMail");
+//    七夕活动
+    Route::prefix("qixi")->group(function (){
+        Route::get("/","WeChatController@QiXiIndex");
+//        Route::get("/","WeChatController@QiXiIndex")->middleware('qixi');
+    });
+//    公众号新名字参与奖
+    Route::get("lucky-draw","WeChatController@LuckyDraw");
 });
