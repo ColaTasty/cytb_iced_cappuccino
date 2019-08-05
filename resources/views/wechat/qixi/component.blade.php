@@ -17,6 +17,7 @@
         @show
     </title>
     <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/weui/2.0.1/style/weui.css" rel="stylesheet">
     <link href="https://makia.dgcytb.com/css/wechat/qixi/global.css" rel="stylesheet">
     @section('css')
     @show
@@ -24,33 +25,26 @@
 
 <body>
 {{--导航栏--}}
-<nav class="navbar navbar-default" style="position: sticky;top: 0;border: none;margin-bottom: 0;background-color: rgba(0, 0, 0, 0.8);color: #FFFFFF">
+<nav class="navbar navbar-default cytb-nav">
     <div class="container-fluid">
         <div class="navbar-header">
             <img class="cytb-nav-logo" alt="Brand" src="https://makia.dgcytb.com/image/tieba_logo.png">
-            <span class="cytb-nav-title">城院贴吧<span class="label label-default cytb-label" style="background-color: #FFFFFF;color: rgba(0, 0, 0, 0.9);">Pro</span></span>
+            <span class="text-center" style="width: 100%;position: absolute;left: 0;right: 0;top: 8px;">七夕特别活动</span>
         </div>
     </div>
 </nav>
 {{--正在加载--}}
 <div id="loading" class="loading">
-    <div class="box lds-double-ring">
-        <div></div>
-        <div></div>
-        <div>
-            <div></div>
-        </div>
-        <div>
-            <div></div>
-        </div>
-    </div>
-    <div class="comment">
-        正在加载
-    </div>
+    <img class="box" src="https://makia.dgcytb.com/image/Ellipsis-2s-200px.gif"/>
 </div>
 @section('content')
     <h2 style="width:100%;text-align:center">网页出错了T^T&nbsp;|&nbsp;404&nbsp;Not&nbsp;Found</h2>
 @show
+<!-- 底部 -->
+<div class="cytb-footer cytb-bg-black">
+    <span>&copy;&nbsp;{{date("Y")}}&nbsp;城院贴吧Pro</span>
+</div>
+<!-- 底部end -->
 <script src="https://cdn.bootcss.com/jquery/3.4.1/jquery.js"></script>
 <script src="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/js/bootstrap.js"></script>
 <script src="https://cdn.bootcss.com/vue/2.6.10/vue.min.js"></script>

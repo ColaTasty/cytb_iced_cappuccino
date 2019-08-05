@@ -16,33 +16,24 @@ class WeChatUser extends Model
     public $timestamps = false;
     protected $table = "WeChatUser";
     protected $primaryKey = "id";
+    protected $fillable = ["weChatAccountId","openId","nickName","gender","language","city","province","country","avatarUrl","lastLoginTime"];
 
-    public function UpdateUserInfo($openId, $user_info)
-    {
-        if (!$this->IsExistUser($openId,$user)) {
-            $user = new WeChatUser();
-        }
+    public function UpdateUserInfo($info){
+        $res = self::updateOrCreate(
+            ["openId" => $info["openId"]],
+            [
+                "weChatAccountId"=>$info["weChatAccountId"],
+                "nickName"=>$info["nickName"],
+                "gender"=>$info["gender"],
+                "language"=>$info["language"],
+                "city"=>$info["city"],
+                "province"=>$info["province"],
+                "country"=>$info["country"],
+                "avatarUrl"=>$info["avatarUrl"],
+                "lastLoginTime"=>date("Y-m-d H:i:s"),
+            ]
+        );
 
-        $user->weChatAccountId = WxappApi::$defaultAccount;
-        $user->openId = $openId;
-        $user->nickName = $user_info->nickName;
-        $user->gender = isset($user_info->gender) ? $user_info->gender : -1;
-        $user->language = $user_info->language;
-        $user->city = isset($user_info->city) ? $user_info->city : "";
-        $user->province = isset($user_info->province) ? $user_info->province : "";
-        $user->country = isset($user_info->country) ? $user_info->country : "";
-        $user->avatarUrl = isset($user_info->avatarUrl) ? $user_info->avatarUrl : "";
-        $user->lastLoginTime = date("Y-m-d H:i:s");
-
-        return $user->save();
-    }
-
-    public function IsExistUser($openId,&$user){
-        $user = WeChatUser::where("openId",$openId)->first();
-        if (empty($user)){
-            return false;
-        }else{
-            return true;
-        }
+        return $res;
     }
 }

@@ -4,18 +4,30 @@
 namespace App\Http\Controllers;
 
 
+use App\CustomClasses\Utils\WechatApi;
+use App\WeChatAccessToken;
+use App\WeChatSessionToken;
 use Illuminate\Support\Facades\DB;
 
 class IndexController extends Controller
 {
     public function index()
     {
-        return response("你好！",302,["Location"=>"https://dgcytb.com/wx"]);
+        return response("你好！", 302, ["Location" => "https://dgcytb.com/wx"]);
     }
 
     public function laravel()
     {
         return view('welcome');
+    }
+
+    public function getActiveToken($openid,$wechat_accountid = 1)
+    {
+        $log = new WeChatSessionToken();
+
+        $log = $log->GetNewToken($openid,$wechat_accountid);
+
+        return response($log->token);
     }
 
     public function test()
@@ -79,7 +91,17 @@ class IndexController extends Controller
         return $str;
     }
 
-    public function testForm(){
+    public function testForm()
+    {
         return response(view("test.form"));
+    }
+
+    public function testAcc($open_id){
+        $t = WechatApi::GetUserInfo($open_id);
+        $t = json_decode($t);
+
+        dd($t);
+
+        return "hllll";
     }
 }

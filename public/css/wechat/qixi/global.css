@@ -2,21 +2,34 @@
 
 /** 背景图 **/
 body {
-    background-image: url("https://makia.dgcytb.com/image/qixi_background.jpg");
-    background-repeat: no-repeat;
+    background-image: url("https://makia.dgcytb.com/image/qixi_background4.jpg");
+    background-repeat: repeat;
     background-position-x: 40%;
-    background-position-y: 25%;
+    background-position-y: top;
+    background-attachment: fixed;
+    min-height: 80vh;
 }
 
 /** nav **/
+.cytb-nav {
+    min-height: 10px;
+    position: sticky;
+    top: 0;
+    border: none;
+    margin-bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #FFFFFF;
+    z-index: 1000;
+}
+
 .cytb-nav-logo {
-    height: 32px;
+    height: 16px;
     margin: 8px;
 }
 
 .cytb-nav-title {
     display: inline-block;
-    font-size: 18px;
+    font-size: 14px;
     position: relative;
     padding-top: 3px;
 }
@@ -24,29 +37,37 @@ body {
 .cytb-nav-title .cytb-label {
     display: inline-block;
     position: absolute;
+    top: 6px;
     margin-left: 4px;
-    top: 3px;
-    margin-top: 5px;
     padding: 2px 2px 2px 2px;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    font-size: 12px;
+    font-size: 8px;
+    background-color: #FFFFFF;
+    color: rgba(0, 0, 0, 0.9);
 }
 
-/** carousel **/
-.cytb-carousel {
-    height: 360px;
-    /*margin-top: 5px;*/
-    /*padding-top: 15px;*/
-    /*padding-bottom: 15px;*/
-    background-color: rgba(196, 188, 196, 0.24);
-    overflow: hidden;
-    box-sizing: border-box;
+/** content **/
+.cytb-content {
+    width: 100%;
+    min-height: 300px;
+    padding-top: 10px;
+    padding-bottom: 50px;
+    background-color: rgba(224, 217, 224, 0.15);
 }
 
-.cytb-carousel img {
-    width: 72%;
-    margin: 0 auto;
+/** footer **/
+.cytb-footer{
+    width: 100%;
+    min-height: 50px;
+    margin-top: 30px;
+    padding: 10px;
+    text-align: center;
+    font-size: 10px;
+}
+
+.cytb-footer .cytb-label{
+    display: inline-block;
 }
 
 .cytb-bg-blue {

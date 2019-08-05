@@ -136,8 +136,19 @@ class WxappController extends Controller
 
         if ($res) {
             $user = new WeChatUser();
-            $res = $user->UpdateUserInfo($openId, $user_info);
-            if ($res) {
+            $res = $user->UpdateUserInfo([
+                'openId'=>$user_info->openId,
+                'weChatAccountId'=>$user_info->weChatAccountId,
+                'nickName'=>$user_info->nickName,
+                'gender'=>$user_info->gender,
+                'language'=>$user_info->language,
+                'city'=>$user_info->city,
+                'province'=>$user_info->province,
+                'country'=>$user_info->country,
+                'avatarUrl'=>$user_info->avatarUrl,
+                'lastLoginTime'=>$user_info->lastLoginTime,
+            ]);
+            if (!empty($res)) {
                 ResponseConstructor::SetStatus(true);
                 ResponseConstructor::SetMsg("数字签名正确，信息完整");
                 ResponseConstructor::SetData("userInfo", $user_info);

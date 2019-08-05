@@ -20,6 +20,7 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         //
-        "https://makia.dgcytb.com/wxapp/*"
+        "https://makia.dgcytb.com/wxapp/*",
+        '/wechat/qixi/submit-info'
     ];
 }

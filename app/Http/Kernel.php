@@ -60,7 +60,8 @@ class Kernel extends HttpKernel
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'qixi'=>\App\Http\Middleware\QiXiActive::class
+        'qixi'=>\App\Http\Middleware\QiXiActive::class,
+        'user.session.token'=>\App\Http\Middleware\UserSessionToken::class,
     ];
 
     /**

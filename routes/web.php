@@ -16,6 +16,7 @@
  */
 Route::any("/index","IndexController@index");
 Route::get("/laravel","IndexController@laravel");
+Route::get("/get-active-token/{openid}/{wechat_accountid?}","IndexController@getActiveToken");
 
 /**
  * 测试
@@ -28,6 +29,7 @@ Route::prefix("test")->group(function (){
     Route::get("post","IndexController@testPost");
     Route::get("url-encode","IndexController@testUrlEncode");
     Route::get("form","IndexController@testForm");
+    Route::get("acc/{open_id}","IndexController@testAcc");
 });
 
 /**
@@ -59,9 +61,22 @@ Route::prefix("wechat")->group(function (){
 //    查询录取通知书邮件
     Route::any("query-examination-mail/{ticket?}","WeChatController@QueryExaminationMail");
 //    七夕活动
-    Route::prefix("qixi")->group(function (){
-        Route::get("/","WeChatController@QiXiIndex");
-//        Route::get("/","WeChatController@QiXiIndex")->middleware('qixi');
+    Route::middleware(['user.session.token'])->group(function (){
+        Route::prefix("qixi")->group(function (){
+            Route::get(
+                "default-matching","WeChatQixiController@DefaultMatching"
+            );
+            Route::get(
+                "/start-matching","WeChatQixiController@StartMatching"
+            );
+            Route::post(
+                "/submit-info","WeChatQixiController@SubmitInfo"
+            );
+            Route::get(
+                "/{active_token?}","WeChatQixiController@Index"
+            );
+            //)->middleware(['qixi','user.session.token']);
+        });
     });
 //    公众号新名字参与奖
     Route::get("lucky-draw","WeChatController@LuckyDraw");

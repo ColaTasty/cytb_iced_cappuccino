@@ -50,10 +50,6 @@ class WeChatController extends Controller
         return view("wechat.queryExaminationMail.result",["res"=>$res]);
     }
 
-    public function QiXiIndex(){
-        return response(view("wechat.qixi.index"));
-    }
-
     public function LuckyDraw(){
         return response("Lucky Draw");
     }
