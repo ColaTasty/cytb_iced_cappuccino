@@ -129,8 +129,7 @@ class WechatApi
         $url = str_replace("[ACCESS_TOKEN]",$access_token,$url);
         $url = str_replace("[MEDIA_ID]",$media_id,$url);
 
-        $send = new HttpSendRequest();
-        $res = $send->sendGet($url)->send();
+        $res = file_get_contents($url);
 
         return $res;
     }

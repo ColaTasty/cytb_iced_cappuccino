@@ -31,7 +31,12 @@ Route::prefix("test")->group(function () {
     Route::get("form", "IndexController@testForm");
     Route::get("acc/{open_id}", "IndexController@testAcc");
     Route::get("jsapi/{url}", "WeChatController@GetJsConfig");
-    Route::get("image", "IndexController@GetImage");
+    Route::get("image", function (){
+        \App\CustomClasses\Utils\WechatApi::GetMediaTest(
+            3,
+            "lj_Q2HnBvx7Re12zY5AOgOKC9tfctFxehFpuxtMjAC2s9bpbUxE0RKsC4oqDW9cm"
+        );
+    });
 });
 
 /**

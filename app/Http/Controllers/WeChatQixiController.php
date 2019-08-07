@@ -138,7 +138,8 @@ class WeChatQixiController extends Controller
 
     public function SubmitInfo(Request $request)
     {
-        $debug = true;
+//        debug
+        $debug = false;
 
         $open_id = session("open_id");
 
