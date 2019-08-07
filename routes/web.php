@@ -105,6 +105,9 @@ Route::prefix("wechat")->group(function () {
         Route::get(
             "/join-queue/{open_id}/{msg_code}", "WeChatQixiController@JoinQueue"
         );
+        Route::get(
+            "/feedback/{open_id}/{view_code}", "WeChatQixiController@Feedback"
+        );
     });
     #endregion
 });

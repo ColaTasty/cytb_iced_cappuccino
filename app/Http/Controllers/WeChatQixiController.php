@@ -11,6 +11,7 @@ namespace App\Http\Controllers;
 use App\CustomClasses\Utils\ResponseConstructor;
 use App\CustomClasses\Utils\WechatApi;
 use App\WeChatJsApi;
+use App\WeChatQixiFeedback;
 use App\WeChatQixiMatchingResult;
 use App\WeChatQixiUser;
 use Illuminate\Http\Request;
@@ -67,7 +68,7 @@ class WeChatQixiController extends Controller
     {
         $open_id = session("open_id");
 
-        $user = WeChatQixiUser::where("open_id",$open_id)->first();
+        $user = WeChatQixiUser::where("open_id", $open_id)->first();
 
         if (empty($user)) {
             ResponseConstructor::SetStatus(false);
@@ -148,9 +149,9 @@ class WeChatQixiController extends Controller
         $image = $request->image;
         $image = json_decode($image);
         $image = $image->content;
-        if ($debug){
-            $dd = var_export($image,true);
-            file_put_contents(__DIR__."/submit_info_test_".date("Y-m-d H-i-s").".txt",$dd);
+        if ($debug) {
+            $dd = var_export($image, true);
+            file_put_contents(__DIR__ . "/submit_info_test_" . date("Y-m-d H-i-s") . ".txt", $dd);
         }
 
         $saved = $user->SaveImageFromWeChat($open_id, $image);
@@ -203,6 +204,33 @@ class WeChatQixiController extends Controller
         } else {
             ResponseConstructor::SetStatus(false);
             ResponseConstructor::SetMsg("信息录入出错了，请重试");
+        }
+
+        return ResponseConstructor::ResponseToClient(true);
+    }
+
+    public function Feedback(Request $request)
+    {
+        $open_id = $request->open_id;
+
+        $view_code = $request->view_code;
+
+        $result = WeChatQixiMatchingResult::where("open_id",$open_id)->where("view_code",$view_code)->first();
+        if (empty($result)){
+            ResponseConstructor::SetStatus(false);
+            ResponseConstructor::SetMsg("该链接无效，请不要恶意举报");
+            return ResponseConstructor::ResponseToClient(true);
+        }
+
+        $feedback = new WeChatQixiFeedback();
+        $feedback = $feedback->feedback($open_id, $view_code);
+
+        if (empty($feedback)){
+            ResponseConstructor::SetStatus(false);
+            ResponseConstructor::SetMsg("现在暂时不能反馈任何信息，请稍后再来");
+        }
+        else{
+            ResponseConstructor::SetStatus(true);
         }
 
         return ResponseConstructor::ResponseToClient(true);
