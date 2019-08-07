@@ -8,67 +8,34 @@
 namespace App;
 
 
+use App\CustomClasses\Utils\WechatApi;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
 class WeChatQixiUser extends Model
 {
     protected $table = "WeChatQixiUser";
-    protected $primaryKey = "open_id";
-    protected $fillable = ["open_id", "name", "gender", "description", "image", "status", "msg_code"];
+    protected $primaryKey = "id";
+    protected $fillable = ["open_id", "name", "contact", "gender", "description", "image", "status"];
     protected $dateFormat = "Y-m-d H:i:s";
 
     private $image_root = __DIR__ . "/../public/storage/qixi";
 
-    public function HaveInfo($open_id)
+    public function Insert($open_id, $name, $contact, $gender, $description)
     {
-        $now = time();
-
-        $msg_code = substr(md5($open_id . $now), 0, 10);
-
-        $log = WeChatQixiUser::firstOrCreate(
+        $user = WeChatQixiUser::updateOrCreate(
             ["open_id" => $open_id],
-            ["msg_code" => $msg_code]
-        );
+            [
+                "name" => $name,
+                "contact" => $contact,
+                "gender" => $gender,
+                "description" => $description
+            ]);
 
-        if (empty($log->name))
-            return false;
-        else
-            return true;
-    }
-
-    public function IsMatching($open_id)
-    {
-        $now = time();
-
-        $msg_code = substr(md5($open_id . $now), 0, 10);
-
-        $log = WeChatQixiUser::firstOrCreate(
-            ["open_id" => $open_id],
-            ["msg_code" => $msg_code]
-        );
-
-        if ($log->status == 0)
-            return false;
-        else
-            return true;
-    }
-
-    public function Insert($open_id, $name, $gender, $description)
-    {
-        $user = WeChatQixiUser::find(
-            $open_id
-        )->update([
-            "name" => $name,
-            "gender" => $gender,
-            "description" => $description
-        ]);
-
-        if (empty($user)){
-            return false;
-        }
-        else{
-            return true;
+        if (empty($user)) {
+            return null;
+        } else {
+            return $user;
         }
     }
 
@@ -92,10 +59,10 @@ class WeChatQixiUser extends Model
 //                开始存储
                 $fileName = time() + random_int(0, 10) . "." . $ext;
 
-                $publicUrl = "http://makia.dgcytb.com/storage/" . $open_id . "/" . $fileName;
+                $publicUrl = "http://makia.dgcytb.com/storage/qixi/" . $open_id . "/" . $fileName;
                 array_push($image_url, $publicUrl);
 
-                if (!$file->storeAs("public/qixi/".$open_id, $fileName)) {
+                if (!$file->storeAs("public/qixi/" . $open_id, $fileName)) {
                     return 3;
                 };
             } else {
@@ -108,7 +75,42 @@ class WeChatQixiUser extends Model
         ];
         $detail = json_encode($detail);
 
-        $user = self::find($open_id);
+        $user = self::firstOrCreate(
+            ["open_id"=>$open_id]
+        );
+        $user->image = $detail;
+
+        if ($user->save()) {
+            return true;
+        } else {
+            return 5;
+        }
+    }
+
+    public function SaveImageFromWeChat($open_id, $image)
+    {
+        $image_url = [];
+
+        foreach ($image as $media_id) {
+//                开始存储
+            $file = WechatApi::GetMedia(3, $media_id);
+            $fileName = time() + random_int(0, 10) . ".jpg";
+            $publicUrl = "http://makia.dgcytb.com/storage/qixi/" . $open_id . "/" . $fileName;
+            array_push($image_url, $publicUrl);
+
+            if (!Storage::put("public/qixi/" . $open_id . "/" . $fileName, $file)) {
+                return 3;
+            };
+        }
+
+        $detail = [
+            "image_url" => $image_url
+        ];
+        $detail = json_encode($detail);
+
+        $user = self::firstOrCreate(
+            ["open_id"=>$open_id]
+        );
         $user->image = $detail;
 
         if ($user->save()) {

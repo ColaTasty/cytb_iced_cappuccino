@@ -9,6 +9,9 @@ namespace App\Http\Controllers;
 
 
 use App\CustomClasses\Utils\ResponseConstructor;
+use App\CustomClasses\Utils\WechatApi;
+use App\WeChatJsApi;
+use App\WeChatQixiMatchingResult;
 use App\WeChatQixiUser;
 use Illuminate\Http\Request;
 
@@ -22,32 +25,114 @@ class WeChatQixiController extends Controller
         return response(view("wechat.qixi.index"));
     }
 
-    public function DefaultMatching()
+    public function DefaultMatching(Request $request)
     {
         $open_id = session("open_id");
 
-        $user = new WeChatQixiUser();
+//        view_code访问页面
+        if (isset($request->view_code)) {
+            $view_code = $request->view_code;
 
-        $matching = $user->IsMatching($open_id);
+            $result = WeChatQixiMatchingResult::where("view_code", $view_code)->where("open_id", $open_id)->first();
+//            不存在的code
+            if (empty($result)) {
+                return response(view("error", ["msg" => "不存在的访问值"]));
+            }
 
-        return response(view("wechat.qixi.defaultMatching", ["matching" => $matching]));
+            #region            超时拒绝  废弃
+            /*
+            $now = time();
+
+            $expire = strtotime($result->updated_at);
+            $expire = $expire + 60 * 60 * 2;
+
+            $other_open_id = $result->other_open_id;
+            $other_result = WeChatQixiMatchingResult::where("open_id", $other_open_id)->first();
+
+            if ($expire < $now && $result->status == 1) {
+                if (empty($other_result) || $other_result->status == 0) {
+                    return response(view("error", ["msg" => "匹配结果已失效"]), 404);
+                }
+            }
+            */
+            #endregion
+
+            return response(view("wechat.qixi.matchingResult", ["result" => $result]));
+        }
+//        默认页面
+        return response(view("wechat.qixi.defaultMatching", ["matching" => false]));
     }
 
     public function StartMatching()
     {
         $open_id = session("open_id");
 
-        $user = new WeChatQixiUser();
+        $user = WeChatQixiUser::where("open_id",$open_id)->first();
 
-        if (!$user->HaveInfo($open_id)) {
+        if (empty($user)) {
             ResponseConstructor::SetStatus(false);
             ResponseConstructor::SetMsg("你还没有上传匹配信息");
         } else {
-            $user = WeChatQixiUser::find($open_id);
-            ResponseConstructor::SetStatus(true);
-            ResponseConstructor::SetMsg("你提交过信息了");
-            ResponseConstructor::SetData("msgCode", $user->msg_code);
+            $matching = new WeChatQixiMatchingResult();
+            $result = $matching->Matching($open_id);
+            if (empty($result)) {
+                ResponseConstructor::SetStatus(true);
+                ResponseConstructor::SetMsg("暂时不能帮你匹配到，请晚些再来");
+            } else {
+                ResponseConstructor::SetStatus(true);
+                ResponseConstructor::SetMsg("加入匹配成功！");
+                ResponseConstructor::SetData("viewCode", $result->view_code);
+            }
         }
+        return ResponseConstructor::ResponseToClient(true);
+    }
+
+    public function WantMatching(Request $request)
+    {
+        $open_id = session("open_id");
+
+        $view_code = $request->view_code;
+
+        $result = WeChatQixiMatchingResult::where("view_code", $view_code)->where("open_id", $open_id)->first();
+//        不存在的code
+        if (empty($result)) {
+            return response(view("error", ["msg" => "请检查网址"]));
+        }
+
+        $other_open_id = $result->other_open_id;
+        $other_result = $result->WantMatching($open_id, $other_open_id);
+//        另一位code保存失败
+        if (empty($other_result)) {
+            ResponseConstructor::SetStatus(false);
+            ResponseConstructor::SetMsg("提醒另一位失败了，请重试");
+            return ResponseConstructor::ResponseToClient(true);
+        }
+
+        $self_user = WeChatQixiUser::where("open_id", $open_id)->first();
+        $other_url = "https://makia.dgcytb.com/wechat/qixi/default-matching/" . $other_result->view_code;
+        if ($other_result->status == 1)
+            $res = WechatApi::SendTextCustomNotice($other_open_id, "你和{$self_user->name}的匹配成功，快进来看看！\n <a href='$other_url'>点击进入</a>");
+        else
+            $res = WechatApi::SendTextCustomNotice($other_open_id, $self_user->name . "想和你交换信息！\n <a href='$other_url'>点击进入</a>");
+//        提醒失败
+        if (!$res) {
+            ResponseConstructor::SetStatus(false);
+            ResponseConstructor::SetMsg("提醒TA失败了，请重试");
+            return ResponseConstructor::ResponseToClient(true);
+        }
+
+        $result->status = 1;
+//        保存结果
+        if ($result->save()) {
+            $url = "https://makia.dgcytb.com/wechat/qixi/default-matching/$request->view_code";
+            ResponseConstructor::SetStatus(true);
+            WechatApi::SendTextCustomNotice($open_id, "你发起了一个查看信息请求\n <a href='{$url}'>查看结果</a>");
+            ResponseConstructor::SetMsg("我们已经提醒TA了\n你如果2个小时之内没有收到任何提醒\n可能是TA拒绝了");
+        } else {
+            ResponseConstructor::SetStatus(false);
+            ResponseConstructor::SetMsg("未知错误");
+        }
+
         return ResponseConstructor::ResponseToClient(true);
     }
 
@@ -57,9 +142,11 @@ class WeChatQixiController extends Controller
 
         $user = new WeChatQixiUser();
 
-        $image = $request->file("image");
+        $image = $request->image;
+        $image = json_decode($image);
+        $image = $image->content;
 
-        $saved = $user->SaveImage($open_id, $image);
+        $saved = $user->SaveImageFromWeChat($open_id, $image);
         if (!$saved) {
             switch ($saved) {
                 default:
@@ -80,18 +167,33 @@ class WeChatQixiController extends Controller
 
         $name = $_POST["name"];
 
+        $contact = $_POST["contact"];
+
         $gender = $_POST["gender"];
 
         $description = $_POST["description"];
 
-        $res = $user->Insert($open_id,$name,$gender,$description);
+        $user = $user->Insert($open_id, $name, $contact, $gender, $description);
 
-        if ($res){
-            $user = WeChatQixiUser::find($open_id);
-            ResponseConstructor::SetStatus(true);
-            ResponseConstructor::SetData("msgCode",$user->msg_code);
-        }
-        else{
+        if (!empty($user)) {
+            $user->status = 1;
+            if ($user->save()) {
+                ResponseConstructor::SetStatus(true);
+
+                $result = new WeChatQixiMatchingResult();
+
+                $result = $result->Matching($open_id);
+                if (empty($result)) {
+                    ResponseConstructor::SetMsg("加入匹配成功，但是暂时不能为你匹配\n请晚些时候来！");
+                } else {
+                    ResponseConstructor::SetData("viewCode", $result->view_code);
+                    ResponseConstructor::SetMsg("加入匹配成功");
+                }
+            } else {
+                ResponseConstructor::SetStatus(false);
+                ResponseConstructor::SetMsg("加入匹配失败，请稍后重试");
+            }
+        } else {
             ResponseConstructor::SetStatus(false);
             ResponseConstructor::SetMsg("信息录入出错了，请重试");
         }

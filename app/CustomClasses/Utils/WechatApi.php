@@ -10,6 +10,7 @@ namespace App\CustomClasses\Utils;
 
 use App\WeChatAccessToken;
 use App\WeChatAccount;
+use App\WeChatJsApi;
 
 class WechatApi
 {
@@ -18,7 +19,8 @@ class WechatApi
         "access_token" => "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=[APP_ID]&secret=[APP_SECRET]",
         "user_info" => "https://api.weixin.qq.com/cgi-bin/user/info?access_token=[ACCESS_TOKEN]&openid=[OPEN_ID]&lang=en",
         "custom_notice" => "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=[ACCESS_TOKEN]",
-        "jssdk" => "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=[ACCESS_TOKEN]&type=jsapi"
+        "jssdk" => "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=[ACCESS_TOKEN]&type=jsapi",
+        "media"=>"http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=[ACCESS_TOKEN]&media_id=[MEDIA_ID]"
     ];
 
     public static function GetAccessToken()
@@ -79,8 +81,16 @@ class WechatApi
         $res = $send->sendPost($url)
             ->setPostData($data)
             ->send();
+        $res = json_decode($res);
 
-        dd($res);
+        if ($res->errcode == 0){
+            return true;
+        }
+        else{
+            $res = var_export($res,true);
+            file_put_contents(__DIR__."/../".date("Y-m-d H:i:s"),$res);
+            return false;
+        }
     }
 
     public static function GetJsApi($account_id = 0)
@@ -103,5 +113,25 @@ class WechatApi
         }
 
         return $res->ticket;
+    }
+
+    public static function GetJsConfig($account_id,$url,$api_list=null,$debug=false){
+        $js_api = new WeChatJsApi();
+        return $js_api->GetJsConfig($account_id,$url,$api_list,$debug);
+    }
+
+    public static function GetMedia($account_id,$media_id){
+        $url = self::$url["media"];
+
+        $access_token = new WeChatAccessToken();
+        $access_token = $access_token->GetAccessToken($account_id);
+
+        $url = str_replace("[ACCESS_TOKEN]",$access_token,$url);
+        $url = str_replace("[MEDIA_ID]",$media_id,$url);
+
+        $send = new HttpSendRequest();
+        $res = $send->sendGet($url)->send();
+
+        return $res;
     }
 }

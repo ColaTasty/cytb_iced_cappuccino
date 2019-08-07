@@ -7,7 +7,10 @@
 
 namespace App\Http\Controllers;
 
+use App\CustomClasses\Utils\ResponseConstructor;
 use App\Http\Controllers\WeChat\QueryExaminationMail;
+use App\WeChatJsApi;
+use Illuminate\Http\Request;
 
 
 class WeChatController extends Controller
@@ -26,20 +29,22 @@ class WeChatController extends Controller
         if ($tmpStr === $signature) {
             return response($echostr);
         } else {
-            return response(view("error",["msg"=>"Identify Failed"]),404);
+            return response(view("error", ["msg" => "Identify Failed"]), 404);
         }
     }
 
-    public function PleaseUpdate(){
+    public function PleaseUpdate()
+    {
         return view("pleaseUpdate");
     }
 
-    public function QueryExaminationMail($ticket=""){
-        if (empty($ticket) && !isset($_POST["ticket"])){
+    public function QueryExaminationMail($ticket = "")
+    {
+        if (empty($ticket) && !isset($_POST["ticket"])) {
             return view("wechat.queryExaminationMail.form");
         }
 
-        if (isset($_POST["ticket"])){
+        if (isset($_POST["ticket"])) {
             $ticket = $_POST["ticket"];
         }
 
@@ -47,10 +52,33 @@ class WeChatController extends Controller
 
         $res = $query->query($ticket);
 
-        return view("wechat.queryExaminationMail.result",["res"=>$res]);
+        return view("wechat.queryExaminationMail.result", ["res" => $res]);
     }
 
-    public function LuckyDraw(){
+    public function LuckyDraw()
+    {
         return response("Lucky Draw");
+    }
+
+    public function GetJsConfig(Request $request)
+    {
+        if (!isset($request->url)) {
+            return response(view("error"));
+        }
+
+        $url = $request->url;
+
+        $js_api = new WeChatJsApi();
+
+        $js_config = $js_api->GetJsConfig(3, $url);
+        if (empty($js_config)) {
+            ResponseConstructor::SetStatus(false);
+            ResponseConstructor::SetMsg("jsapi_ticket获取失败");
+        }
+
+        ResponseConstructor::SetStatus(true);
+        ResponseConstructor::SetData("jsConfig",$js_config);
+
+        return ResponseConstructor::ResponseToClient(true);
     }
 }

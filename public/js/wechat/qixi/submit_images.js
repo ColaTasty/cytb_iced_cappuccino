@@ -7,16 +7,13 @@ _img_modal.on("hidden.bs.modal", function () {
     $("#submit-info").modal("show");
 });
 
-_img_modal.on("show.bs.modal", function () {
-    $("#submit-info").modal("hide");
-});
-
 /**
  * 删除图片
  */
 $("#delete-image").on("click", function () {
     if (confirm("确定删除这张照片吗？")) {
-        var fileIndex = _img_modal.data("fileIndex");
+        var fileIndex = _img_modal.data("images_idx");
+        fileIndex = Number.parseInt(fileIndex);
         console.log(fileIndex);
 
         if (_images.length == 0) {
@@ -38,60 +35,69 @@ $("#delete-image").on("click", function () {
         _img_modal.data("target").remove();
 
         _img_modal.modal("hide");
+
+        var uploader_box = $("#uploader-box");
+        if (_images.length < 3) {
+            uploader_box.fadeIn(100);
+        } else {
+            uploader_box.fadeOut(100);
+        }
     }
 });
 
 /**
  * 查看图片
  */
-var onclick_Image = function (e) {
+var previewImage = function (e) {
     var _self = $(e);
+    var url = _self.data("url");
+    var form = $("#submit-info");
 
-    _img_modal.data("fileIndex", _self.data("fileIndex"));
+    $("#modal-show-img").attr("src", url);
     _img_modal.data("target", _self);
+    _img_modal.data("images_idx", _self.data("images_idx"));
 
-    $("#modal-show-img").attr("src", _self.data("src"));
-
-    _img_modal.modal("show");
+    form.modal("hide");
+    setTimeout(function () {
+        _img_modal.modal("show");
+    },350);
 };
 
 /**
  * 选择图片
  */
-$("#uploader-input").on("change", function () {
-    var uploader_box = $("#uploader-box");
-    uploader_box.fadeOut(100);
+$("#uploader-box").on("click", function () {
+    var uploader_box = $(this);
+    wx.chooseImage({
+        count: 3 - _images.length, // 默认9
+        sizeType: ['original', 'compressed'], // 可以指定是原图还是压缩图，默认二者都有
+        sourceType: ['album', 'camera'], // 可以指定来源是相册还是相机，默认二者都有
+        success: function (res) {
+            var localIds = res.localIds; // 返回选定照片的本地ID列表，localId可以作为img标签的src属性显示图片
 
-    var _self = $(this);
+            for (var local_idx = 0; local_idx < localIds.length; local_idx++) {
+                var _images_index = _images.length;
+                var tmp_item = $(_item_image_li.replace("[URL]", localIds[local_idx]));
+                tmp_item.attr("onclick", "previewImage(this)");
+                tmp_item.data("url", localIds[local_idx]);
+                tmp_item.data("images_idx", _images_index);
+                _images.push(localIds[local_idx]);
+                $("#images").append(tmp_item);
+            }
 
-    var file = _self[0].files[0];
-
-    var callback = function (base64code) {
-
-        var src = _url_creator.createObjectURL(file) || undefined;
-
-        if (typeof (src) == "undefined") {
-            return;
+            if (_images.length < 3) {
+                uploader_box.fadeIn(100);
+            } else {
+                uploader_box.fadeOut(100);
+            }
+        },
+        fail: function () {
+            alert("调用失败");
+        },
+        complete: function () {
+            console.log("调用失败");
         }
-        console.log("压缩 : "+base64code);
-        _images.push(base64code);
-
-        var tmp_item = $(_item_image_li.replace("[URL]", src));
-        tmp_item.data("fileIndex", _images.length);
-        tmp_item.data("src", src);
-        tmp_item.attr("onclick", "onclick_Image(this)");
-        tmp_item.data("self", tmp_item);
-
-        $("#images").append(tmp_item);
-
-        if (_images.length < 3) {
-            uploader_box.fadeIn(100);
-        } else {
-            uploader_box.fadeOut(100);
-        }
-    };
-
-    photoCompress(file, {quality: 0.2}, callback);
+    });
 });
 
 /**
@@ -114,6 +120,9 @@ $("#submit").on("click", function () {
     var name = form.find("#name").val();
     name = name.trim();
 
+    var contact = form.find("#contact").val();
+    contact = contact.trim();
+
     var gender = form.find("#gender").val();
     gender = Number.parseInt(gender);
 
@@ -124,6 +133,12 @@ $("#submit").on("click", function () {
     if (name.length <= 0) {
         alert("请输入姓名");
         form.find("#name").focus();
+        return;
+    }
+
+    if (contact.length <= 0) {
+        alert("请输入联系方式");
+        form.find("#contact").focus();
         return;
     }
 
@@ -146,34 +161,67 @@ $("#submit").on("click", function () {
 
     //开始提交
     if (confirm("确定上传这些信息？\n请注意，上传后将无法更改")) {
-        var formData = new FormData();
+        _upload_image(function (res) {
+            var formData = new FormData();
+            var files = res.files;
+            files = {content: files};
+            files = JSON.stringify(files);
 
-        formData.append("name", name);
-        formData.append("gender", gender);
-        formData.append("description", description);
-        _images.forEach(function (image) {
-            formData.append("image[]", convertBase64UrlToBlob(image), "file_" + Date.parse(new Date()) + ".jpg");
-        });
+            formData.append("name", name);
+            formData.append("contact", contact);
+            formData.append("gender", gender);
+            formData.append("description", description);
+            formData.append("image", files);
 
-        $.ajax({
-            url: "/wechat/qixi/submit-info",
-            data: formData,
-            type: "post",
-            contentType: false,
-            processData: false,
-            success: function (res) {
-                if (res.isOK) {
-                    _copy_msgCode(res.msgCode);
-                    alert("信息上传成功\n通信码【" + res.msgCode + "】\n已粘贴到剪切板\n请按规则向公众号回复");
-                    window.location.reload();
-                } else {
-                    alert(res.msg);
+            $.ajax({
+                url: "/wechat/qixi/submit-info",
+                data: formData,
+                type: "post",
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    if (res.isOK) {
+                        alert(res.msg);
+                        if (typeof (res.viewCode) != "undefined")
+                            window.location.href = "/wechat/qixi/default-matching/" + res.viewCode;
+                    } else {
+                        alert(res.msg);
+                    }
+                    $("#submit-info").modal("hide");
                 }
-            }
+            })
         })
     }
-    console.log(form);
 });
+
+/**
+ * 上传图片
+ */
+
+var _upload_image = function (next) {
+    var images_files = [];
+
+    for (var img_id_idx = 0;img_id_idx < _images.length;img_id_idx++){
+        f1(img_id_idx);
+    }
+    function f1(i) {
+        wx.uploadImage({
+            localId: _images[i], // 需要上传的图片的本地ID，由chooseImage接口获得
+            isShowProgressTips: 1, // 默认为1，显示进度提示
+            success: function (res) {
+                var serverId = res.serverId; // 返回图片的服务器端ID
+                images_files.push(serverId);
+                if (Number.parseInt(i) + 1 == _images.length) {
+                    next({files: images_files});
+                }
+            },
+            fail: function () {
+                alert("上传失败");
+            },
+            complete:function () {}
+        });
+    }
+};
 
 /*
     三个参数
