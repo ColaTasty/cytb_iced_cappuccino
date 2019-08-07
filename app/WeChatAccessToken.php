@@ -26,7 +26,7 @@ class WeChatAccessToken extends Model
         $now = time();
 
         if (empty($access_token)) {
-            return $this->SaveAccessToken($accountId);
+            return $this->SaveAccessTokenFromLocal();
         }
 
         $expireTime = strtotime($access_token->expireTime);
@@ -34,7 +34,7 @@ class WeChatAccessToken extends Model
         if ($now < $expireTime) {
             return $access_token->accessToken;
         } else {
-            return $this->SaveAccessToken($accountId);
+            return $this->SaveAccessTokenFromLocal();
         }
     }
 

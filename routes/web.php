@@ -31,37 +31,47 @@ Route::prefix("test")->group(function () {
     Route::get("form", "IndexController@testForm");
     Route::get("acc/{open_id}", "IndexController@testAcc");
     Route::get("jsapi/{url}", "WeChatController@GetJsConfig");
+    Route::get("image", "IndexController@GetImage");
 });
 
 /**
  * 微信小程序
  */
 Route::prefix("wxapp")->group(function () {
-    // 用户登录
+    #region 用户登录
     Route::any("login/{js_code?}", "WxappController@WxappLogin");
-    // 主页内容
+    #endregion
+    #region 主页内容
     Route::any("home-page-features", "WxappController@HomePageFeatures");
-    // 四六级
+    #endregion
+    #region 四六级
     Route::any("cet/{method?}/{zkz?}", "WxappController@Cet");
-    // 验证用户信息
+    #endregion
+    #region 验证用户信息
     Route::any("verify-user-info", "WxappController@VerifyUserInfo");
-    // 解密用户信息
+    #endregion
+    #region 解密用户信息
     Route::any("decrypt", "WxappController@DecryptSensitiveData");
-    // 解析并返回跳转小程序网页
+    #endregion
+    #region 解析并返回跳转小程序网页 弃用
 //    Route::any("website","WxappController@Website");
+    #endregion
 });
 
 /**
  * 微信公众号
  */
 Route::prefix("wechat")->group(function () {
-//    开发者网站授权
+    #region    开发者网站授权
     Route::any("dev-auth", "WeChatController@WeChatDevAuth");
-//    请升级微信
+    #endregion
+    #region    请升级微信
     Route::any("please-update", "WeChatController@PleaseUpdate");
-//    查询录取通知书邮件
+    #endregion
+    #region    查询录取通知书邮件
     Route::any("query-examination-mail/{ticket?}", "WeChatController@QueryExaminationMail");
-//    七夕活动
+    #endregion
+    #region    七夕活动
     Route::middleware(['user.session.token'])->group(function () {
         Route::prefix("qixi")->group(function () {
             Route::get(
@@ -84,12 +94,12 @@ Route::prefix("wechat")->group(function () {
             );
         });
     });
-//    七夕活动(不需验证token)
+    #endregion
+    #region    七夕活动(不需验证token)
     Route::prefix("qixi")->group(function () {
         Route::get(
             "/join-queue/{open_id}/{msg_code}", "WeChatQixiController@JoinQueue"
         );
     });
-//    公众号新名字参与奖
-    Route::get("lucky-draw", "WeChatController@LuckyDraw");
+    #endregion
 });

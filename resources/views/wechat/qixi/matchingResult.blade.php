@@ -23,7 +23,7 @@ $other_result = Result::where("open_id", $other_open_id)->where("other_open_id",
 @extends("wechat.qixi.component")
 
 @section("title")
-    城院贴吧——七夕活动
+    城院贴吧 - 脱单大作战
 @endsection
 
 @section("css")
@@ -244,8 +244,11 @@ $other_result = Result::where("open_id", $other_open_id)->where("other_open_id",
             <?php
             $status = $result->status;
             $other_status = isset($other_result->status) ? $other_result->status : 0;
+            $now = time();
+            $expire = strtotime($result->updated_at);
             ?>
-            <button type="button" class="btn btn-danger btn-lg" onclick="next_matching()" style="width: 50%" id="next-matching">
+            <button type="button" class="btn btn-danger btn-lg" onclick="next_matching()" style="width: 50%"
+                    id="next-matching">
                 匹配下一个
             </button>
             @if($status == 0)
@@ -253,11 +256,18 @@ $other_result = Result::where("open_id", $other_open_id)->where("other_open_id",
                     提出交换信息
                 </button>
             @elseif($status == 1 && $other_status == 0)
-                <button type="button" class="btn btn-success btn-lg" style="width: 50%"
-                        disabled>
-                    等待对方同意
-                </button>
-            @else
+                @if($now < $expire+7200)
+                    <button type="button" class="btn btn-success btn-lg" style="width: 50%"
+                            disabled>
+                        等待对方同意
+                    </button>
+                @else
+                    <button type="button" class="btn btn-danger btn-lg" style="width: 50%"
+                            disabled>
+                        对方拒绝了
+                    </button>
+                @endif
+            @elseif($status == 1 && $other_status == 1)
                 <button type="button" data-toggle="modal" data-target="#info-modal"
                         class="btn btn-success btn-lg" style="width: 50%" id="success-matching">
                     查看对方资料
@@ -292,7 +302,7 @@ $other_result = Result::where("open_id", $other_open_id)->where("other_open_id",
                         $("#submit-info").modal("show");
                     }
                 },
-                error:function (XHR,status,content) {
+                error: function (XHR, status, content) {
                     alertModal("匹配出错了，请稍等一下，或从活动入口重新进入");
                 }
             });
@@ -302,7 +312,8 @@ $other_result = Result::where("open_id", $other_open_id)->where("other_open_id",
                 url: "/wechat/qixi/want-matching/<?php echo $result->view_code;?>",
                 dataType: "json",
                 success: function (res) {
-                    alertModal(res.msg);
+                    alert(res.msg);
+                    next_matching();
                 }
             });
         };

@@ -138,6 +138,8 @@ class WeChatQixiController extends Controller
 
     public function SubmitInfo(Request $request)
     {
+        $debug = true;
+
         $open_id = session("open_id");
 
         $user = new WeChatQixiUser();
@@ -145,6 +147,10 @@ class WeChatQixiController extends Controller
         $image = $request->image;
         $image = json_decode($image);
         $image = $image->content;
+        if ($debug){
+            $dd = var_export($image,true);
+            file_put_contents(__DIR__."/submit_info_test_".date("Y-m-d H-i-s").".txt",$dd);
+        }
 
         $saved = $user->SaveImageFromWeChat($open_id, $image);
         if (!$saved) {

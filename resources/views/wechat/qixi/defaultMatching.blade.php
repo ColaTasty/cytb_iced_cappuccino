@@ -8,7 +8,7 @@
 @extends("wechat.qixi.component")
 
 @section("title")
-    城院贴吧——七夕活动
+    城院贴吧 - 七夕活动
 @endsection
 
 @section("css")
@@ -235,7 +235,7 @@
                 url: "/wechat/qixi/start-matching",
                 dataType: "json",
                 success: function (res) {
-                    alertModal(res.msg);
+                    alert(res.msg);
                     //已提交信息
                     if (res.isOK) {
                         if (typeof (res.viewCode) != "undefined")
