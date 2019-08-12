@@ -8,6 +8,7 @@
 namespace App;
 
 
+use App\CustomClasses\Utils\CreateRandomStr;
 use Illuminate\Database\Eloquent\Model;
 
 class WeChatQixiMatchingResult extends Model
@@ -19,11 +20,11 @@ class WeChatQixiMatchingResult extends Model
 
     public function Matching($open_id)
     {
-        $user = WeChatQixiUser::where("open_id",$open_id)->first();
+        $user = WeChatQixiUser::where("open_id", $open_id)->first();
         if ($user->gender == 0) {
-            $others = WeChatQixiUser::where("gender", 1);
+            $others = WeChatQixiUser::where("gender", 1)->where("status",1);
         } else {
-            $others = WeChatQixiUser::where("gender", 0);
+            $others = WeChatQixiUser::where("gender", 0)->where("status",1);
         }
 
         $others_count = $others->count();
@@ -32,12 +33,11 @@ class WeChatQixiMatchingResult extends Model
         }
         $others = $others->get()->toArray();
 
-        $random = random_int(0, $others_count - 1);
+        $random = random_int(0, ($others_count - 1));
 
         $other = $others[$random];
 
-        $now = time();
-        $view_code = md5($now . $open_id);
+        $view_code = CreateRandomStr::CreateGuid();
         $result = WeChatQixiMatchingResult::firstOrCreate(
             ["open_id" => $open_id, "other_open_id" => $other["open_id"]],
             ["view_code" => $view_code]
@@ -50,19 +50,19 @@ class WeChatQixiMatchingResult extends Model
         }
     }
 
-    public function WantMatching($open_id,$other_open_id){
+    public function WantMatching($open_id, $other_open_id)
+    {
         $now = time();
         $view_code = md5($now . $open_id);
 
         $other_result = WeChatQixiMatchingResult::firstOrCreate(
-            ["open_id"=>$other_open_id,"other_open_id"=>$open_id],
+            ["open_id" => $other_open_id, "other_open_id" => $open_id],
             ["view_code" => $view_code]
         );
 
-        if (empty($other_result)){
+        if (empty($other_result)) {
             return null;
-        }
-        else{
+        } else {
             return $other_result;
         }
     }

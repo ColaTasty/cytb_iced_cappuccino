@@ -62,6 +62,8 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'qixi'=>\App\Http\Middleware\QiXiActive::class,
         'user.session.token'=>\App\Http\Middleware\UserSessionToken::class,
+        'user.check.alter'=>\App\Http\Middleware\CheckAlert::class,
+        'user.refresh.alter'=>\App\Http\Middleware\RefreshAlertCount::class
     ];
 
     /**

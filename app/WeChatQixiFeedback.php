@@ -14,19 +14,19 @@ class WeChatQixiFeedback extends Model
 {
     protected $table = "WeChatQixiFeedback";
     protected $primaryKey = "id";
-    protected $fillable = ["open_id", "view_code"];
+    protected $fillable = ["open_id", "view_code", "status", "result"];
     protected $dateFormat = "Y-m-d H:i:s";
 
-    public function feedback($open_id,$view_code){
+    public function feedback($open_id, $view_code)
+    {
         $res = self::firstOrCreate(
-            ["open_id"=>$open_id],
-            ["view_code"=>$view_code]
+            ["open_id" => $open_id, "view_code" => $view_code],
+            ["status" => 0]
         );
 
-        if (empty($res)){
+        if (empty($res)) {
             return null;
-        }
-        else{
+        } else {
             return $res;
         }
     }

@@ -245,18 +245,18 @@ $other_result = Result::where("open_id", $other_open_id)->where("other_open_id",
             $status = $result->status;
             $other_status = isset($other_result->status) ? $other_result->status : 0;
             $now = time();
-            $expire = strtotime($result->updated_at);
+            $expire = strtotime($result->updated_at)+7200;
             ?>
             <button type="button" class="btn btn-danger btn-lg" onclick="next_matching()" style="width: 50%"
                     id="next-matching">
                 匹配下一个
             </button>
             @if($status == 0)
-                <button type="button" class="btn btn-success btn-lg" style="width: 50%" id="want-matching">
+                <button type="button" class="btn btn-success btn-lg" style="width: 50%" id="want-matching" onclick="want_matching()">
                     提出交换信息
                 </button>
             @elseif($status == 1 && $other_status == 0)
-                @if($now < $expire+7200)
+                @if($now < $expire)
                     <button type="button" class="btn btn-success btn-lg" style="width: 50%"
                             disabled>
                         等待对方同意
@@ -298,8 +298,8 @@ $other_result = Result::where("open_id", $other_open_id)->where("other_open_id",
                     }
                     //未提交信息
                     else {
-                        alertModal(res.msg);
-                        $("#submit-info").modal("show");
+                        alert(res.msg);
+                        window.location.href = "/wechat/qixi/default-matching/";
                     }
                 },
                 error: function (XHR, status, content) {
@@ -308,17 +308,21 @@ $other_result = Result::where("open_id", $other_open_id)->where("other_open_id",
             });
         };
         var want_matching = function () {
+            var url = "<?php echo "/wechat/qixi/want-matching/$result->view_code"?>";
             $.ajax({
-                url: "/wechat/qixi/want-matching/<?php echo $result->view_code;?>",
+                url: url,
                 dataType: "json",
                 success: function (res) {
                     alert(res.msg);
-                    next_matching();
+                    if (res.isOK)
+                        next_matching();
+                },
+                fail: function () {
+                    alert("失败，请在公众号获取新的活动入口后，再回到这里发送请求");
+                    window.location.href = "/wechat/qixi";
                 }
             });
         };
-        $("#next-matching").on("click", next_matching);
-        $("#want-matching").on("click", want_matching);
         $(".carousel-inner img").on("click", function (e) {
             var img = $(this);
             var modal = $("#img-modal");

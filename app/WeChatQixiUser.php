@@ -29,7 +29,8 @@ class WeChatQixiUser extends Model
                 "name" => $name,
                 "contact" => $contact,
                 "gender" => $gender,
-                "description" => $description
+                "description" => $description,
+                "status"=>1
             ]);
 
         if (empty($user)) {
@@ -76,8 +77,19 @@ class WeChatQixiUser extends Model
         $detail = json_encode($detail);
 
         $user = self::firstOrCreate(
-            ["open_id"=>$open_id]
+            ["open_id"=>$open_id],
+            ["status"=>0]
         );
+//        如果是修改信息
+        if (!empty($user->name)){
+            $results = WeChatQixiMatchingResult::where("open_id",$open_id);
+            foreach ($results->cursor() as $result) {
+                $result->status = 0;
+                if (!$result->save()){
+                    break;
+                }
+            }
+        }
         $user->image = $detail;
 
         if ($user->save()) {
@@ -108,8 +120,9 @@ class WeChatQixiUser extends Model
         ];
         $detail = json_encode($detail);
 
-        $user = self::firstOrCreate(
-            ["open_id"=>$open_id]
+        $user = self::updateOrCreate(
+            ["open_id"=>$open_id],
+            ["status"=>0]
         );
         $user->image = $detail;
 

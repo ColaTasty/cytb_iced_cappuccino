@@ -27,9 +27,9 @@
 </head>
 <body>
 @if(isset($msg))
-    <div style="margin-top: 40vh;"><?php echo $msg;?></div>
+    <div style="margin-top: 30vh;"><?php echo $msg;?></div>
 @else
-    <div style="margin-top: 40vh;">访问错误</div>
+    <div style="margin-top: 30vh;">访问错误</div>
 @endif
 @if(isset($code))
     <div>{{$code}}</div>

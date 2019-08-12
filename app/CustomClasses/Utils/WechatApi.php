@@ -10,6 +10,7 @@ namespace App\CustomClasses\Utils;
 
 use App\WeChatAccessToken;
 use App\WeChatAccount;
+use App\WeChatExceptionLog;
 use App\WeChatJsApi;
 
 class WechatApi
@@ -20,7 +21,7 @@ class WechatApi
         "user_info" => "https://api.weixin.qq.com/cgi-bin/user/info?access_token=[ACCESS_TOKEN]&openid=[OPEN_ID]&lang=en",
         "custom_notice" => "https://api.weixin.qq.com/cgi-bin/message/custom/send?access_token=[ACCESS_TOKEN]",
         "jssdk" => "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=[ACCESS_TOKEN]&type=jsapi",
-        "media"=>"http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=[ACCESS_TOKEN]&media_id=[MEDIA_ID]"
+        "media" => "http://file.api.weixin.qq.com/cgi-bin/media/get?access_token=[ACCESS_TOKEN]&media_id=[MEDIA_ID]"
     ];
 
     public static function GetAccessToken()
@@ -83,12 +84,12 @@ class WechatApi
             ->send();
         $res = json_decode($res);
 
-        if ($res->errcode == 0){
+        if ($res->errcode == 0) {
             return true;
-        }
-        else{
-            $res = var_export($res,true);
-            file_put_contents(__DIR__."/../".date("Y-m-d H:i:s"),$res);
+        } else {
+            $res = var_export($res, true);
+            $exceLog = new WeChatExceptionLog();
+            $exceLog->Log("WechatApi::SendTextCustomNotice()", $res);
             return false;
         }
     }
@@ -115,19 +116,21 @@ class WechatApi
         return $res->ticket;
     }
 
-    public static function GetJsConfig($account_id,$url,$api_list=null,$debug=false){
+    public static function GetJsConfig($account_id, $url, $api_list = null, $debug = false)
+    {
         $js_api = new WeChatJsApi();
-        return $js_api->GetJsConfig($account_id,$url,$api_list,$debug);
+        return $js_api->GetJsConfig($account_id, $url, $api_list, $debug);
     }
 
-    public static function GetMedia($account_id,$media_id){
+    public static function GetMedia($account_id, $media_id)
+    {
         $url = self::$url["media"];
 
         $access_token = new WeChatAccessToken();
         $access_token = $access_token->GetAccessToken($account_id);
 
-        $url = str_replace("[ACCESS_TOKEN]",$access_token,$url);
-        $url = str_replace("[MEDIA_ID]",$media_id,$url);
+        $url = str_replace("[ACCESS_TOKEN]", $access_token, $url);
+        $url = str_replace("[MEDIA_ID]", $media_id, $url);
 
         $res = file_get_contents($url);
 

@@ -16,21 +16,14 @@
  */
 Route::any("/index", "IndexController@index");
 Route::get("/laravel", "IndexController@laravel");
-Route::get("/get-active-token/{openid}/{wechat_accountid?}", "IndexController@getActiveToken");
+Route::get("/get-active-token/{open_id}/{wechat_accountid?}", "IndexController@getActiveToken")->middleware('user.refresh.alter');
+Route::get("/get-admin-token/{open_id}", "IndexController@getActiveToken")->middleware('user.refresh.alter');
+Route::get("/add-admin/{operator_open_id}/{open_id}/{level}", "IndexController@AddAdmin")->middleware('user.refresh.alter');
 
 /**
  * 测试
  */
 Route::prefix("test")->group(function () {
-    Route::any("/", "IndexController@test");
-    Route::get("db", "IndexController@testDB");
-    Route::get("json", "IndexController@testJson");
-    Route::get("get", "IndexController@testGet");
-    Route::get("post", "IndexController@testPost");
-    Route::get("url-encode", "IndexController@testUrlEncode");
-    Route::get("form", "IndexController@testForm");
-    Route::get("acc/{open_id}", "IndexController@testAcc");
-    Route::get("jsapi/{url}", "WeChatController@GetJsConfig");
     Route::get("image", function (){
         \App\CustomClasses\Utils\WechatApi::GetMediaTest(
             3,
@@ -77,7 +70,7 @@ Route::prefix("wechat")->group(function () {
     Route::any("query-examination-mail/{ticket?}", "WeChatController@QueryExaminationMail");
     #endregion
     #region    七夕活动
-    Route::middleware(['user.session.token'])->group(function () {
+    Route::middleware(['qixi','user.session.token','user.check.alter'])->group(function () {
         Route::prefix("qixi")->group(function () {
             Route::get(
                 "default-matching/{view_code?}", "WeChatQixiController@DefaultMatching"
@@ -92,7 +85,10 @@ Route::prefix("wechat")->group(function () {
                 "/submit-info", "WeChatQixiController@SubmitInfo"
             );
             Route::get(
-                "/join-queue/{open_id}/{msg_code}", "WeChatQixiController@JoinQueue"
+                "/solve-feedback/{feedback_id?}", "WeChatQixiController@SolveFeedback"
+            );
+            Route::post(
+                "/set-status/{open_id}/{status}", "WeChatQixiController@SetStatus"
             );
             Route::get(
                 "/{active_token?}", "WeChatQixiController@Index"
@@ -103,11 +99,8 @@ Route::prefix("wechat")->group(function () {
     #region    七夕活动(不需验证token)
     Route::prefix("qixi")->group(function () {
         Route::get(
-            "/join-queue/{open_id}/{msg_code}", "WeChatQixiController@JoinQueue"
-        );
-        Route::get(
             "/feedback/{open_id}/{view_code}", "WeChatQixiController@Feedback"
-        );
+        )->middleware('user.refresh.alter');
     });
     #endregion
 });

@@ -6,8 +6,8 @@ use Closure;
 
 class QiXiActive
 {
-    private $start_time = "2019-08-07 23:59:59";
-    private $end_time = "2019-08-07 00:00:00";
+    private $start_time = "2019-08-07 20:00:00";
+    private $end_time = "2019-08-09 21:30:00";
     /**
      * Handle an incoming request.
      *
@@ -22,13 +22,13 @@ class QiXiActive
         $now_time = time();
 
         if ($now_time < $timestamps){
-            return response(view("wechat.qixi.msg",["msg"=>"活动还未开始"]));
+            return response(view("error",["msg"=>"活动还未开始"]));
         }
 
         $timestamps = strtotime($this->end_time);
 
         if ($timestamps < $now_time){
-            return response(view("wechat.qixi.msg",["msg"=>"活动已经结束"]));
+            return response(view("error",["msg"=>"<p style='margin: 0'>本次活动已经结束</p><p style='margin: 0'>持续关注【城院贴吧Pro】公众号</p>","code"=>"获取更多城院咨询和城院活动信息😘"]));
         }
 
         return $next($request);

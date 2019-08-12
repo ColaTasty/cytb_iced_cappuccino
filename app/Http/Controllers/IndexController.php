@@ -4,9 +4,13 @@
 namespace App\Http\Controllers;
 
 
+use App\CustomClasses\Utils\ResponseConstructor;
 use App\CustomClasses\Utils\WechatApi;
 use App\WeChatAccessToken;
+use App\WeChatAdmin;
+use App\WeChatAlertCount;
 use App\WeChatSessionToken;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class IndexController extends Controller
@@ -21,87 +25,50 @@ class IndexController extends Controller
         return view('welcome');
     }
 
-    public function getActiveToken($openid,$wechat_accountid = 1)
+    public function getActiveToken($open_id, $wechat_accountid = 1)
     {
         $log = new WeChatSessionToken();
 
-        $log = $log->GetNewToken($openid,$wechat_accountid);
+        $log = $log->GetNewToken($open_id, $wechat_accountid);
 
         return response($log->token);
     }
 
-    public function test()
+    public function GetAdminToken($open_id)
     {
-        echo "test 111";
+
     }
 
-    public function testJson()
+    public function AddAdmin(Request $request)
     {
-        $arr = [
-            "isOK" => true,
-            "msg" => "JSON Success",
-            "date" => date("Y-m-d H:i:s", time())
-        ];
-        return json_encode($arr);
-    }
-
-    public function testDB()
-    {
-        $res = DB::select("SELECT * FROM Calendar LIMIT 10");
-        foreach ($res as $row) {
-            dump($row);
+        $operator_open_id = $request->operator_open_id;
+        $open_id = $request->open_id;
+        $level = $request->level;
+        $admin = new WeChatAdmin();
+        $admin = $admin->AddAdmin($open_id, $level, $operator_open_id);
+//        检查操作结果
+        if (is_numeric($admin)) {
+            switch ($admin) {
+                default:
+                    ResponseConstructor::SetStatusAndMsg(true, "未知原因出错了");
+                    break;
+                case 1:
+                    ResponseConstructor::SetStatusAndMsg(false, "操作者不是管理员");
+                    break;
+                case 2:
+                    ResponseConstructor::SetStatusAndMsg(false, "操作者管理员期限失效");
+                    break;
+                case 3:
+                    ResponseConstructor::SetStatusAndMsg(false, "操作者权限不够");
+                    break;
+                case 4:
+                    ResponseConstructor::SetStatusAndMsg(false, "未知原因保存失败");
+                    break;
+            }
         }
-    }
-
-    public function testGet()
-    {
-        $arr = [
-            "isOK" => true,
-            "msg" => "Method is GET",
-            "date" => date("Y-m-d H:i:s", time())
-        ];
-        return json_encode($arr);
-    }
-
-    public function testPost()
-    {
-        $arr = [
-            "isOK" => true,
-            "msg" => "Method is POST",
-            "date" => date("Y-m-d H:i:s", time())
-        ];
-        return json_encode($arr);
-    }
-
-    public function testUrlEncode()
-    {
-        $arr = [
-            "isOK" => true,
-            "msg" => "Method is POST",
-            "date" => date("Y-m-d H:i:s", time())
-        ];
-        $str = "";
-        $arr_idx = 0;
-        foreach ($arr as $key => $value) {
-            if ($arr_idx > 0)
-                $str .= "&";
-            $str .= urlencode($key) . "=" . urlencode($value);
-            $arr_idx++;
+        else{
+            ResponseConstructor::SetStatusAndMsg(true, "新的管理员添加成功");
         }
-        return $str;
-    }
-
-    public function testForm()
-    {
-        return response(view("test.form"));
-    }
-
-    public function testAcc($open_id){
-        $t = WechatApi::GetUserInfo($open_id);
-        $t = json_decode($t);
-
-        dd($t);
-
-        return "hllll";
+        return ResponseConstructor::ResponseToClient(true);
     }
 }

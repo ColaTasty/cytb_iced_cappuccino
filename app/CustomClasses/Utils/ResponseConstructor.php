@@ -8,7 +8,6 @@
 namespace App\CustomClasses\Utils;
 
 
-
 class ResponseConstructor
 {
     protected static $resp = [
@@ -19,38 +18,63 @@ class ResponseConstructor
         "content-type" => "application/json"
     ];
 
-    public static function SetResponseHeader(string $key,string $value){
+    public static function SetResponseHeader(string $key, string $value)
+    {
         self::$header[$key] = $value;
     }
 
-    public static function GetResponseHeader(string $key = null){
-        if (!empty($key)){
+    public static function GetResponseHeader(string $key = null)
+    {
+        if (!empty($key)) {
             return self::$header[$key];
         }
         return self::$header;
     }
 
-    public static function SetStatus(bool $status){
+    /**
+     * @param bool $status
+     */
+    public static function SetStatus(bool $status)
+    {
         self::$resp["isOK"] = $status;
     }
 
-    public static function SetMsg(string $msg){
+    /**
+     * @param string $msg
+     */
+    public static function SetMsg(string $msg)
+    {
         self::$resp["msg"] = $msg;
     }
 
-    public static function SetData(string $key,$value){
+    /**
+     * @param string $key
+     * @param $value
+     */
+    public static function SetData(string $key,$value)
+    {
         self::$resp[$key] = $value;
     }
 
-    public static function GetResponse(string $key = null){
-        if (!empty($key)){
+    /**
+     * @param string|null $key
+     * @return array|mixed
+     */
+    public static function GetResponse(string $key = null)
+    {
+        if (!empty($key)) {
             return self::$resp[$key];
         }
         return self::$resp;
     }
 
-    public static function ResponseToClient($auto_packaging = false){
-        if ($auto_packaging){
+    /**
+     * @param bool $auto_packaging
+     * @return false|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response|mixed|string
+     */
+    public static function ResponseToClient(bool $auto_packaging = false)
+    {
+        if ($auto_packaging) {
             return response(
                 self::GetResponse()
             )->withHeaders(
@@ -58,5 +82,15 @@ class ResponseConstructor
             );
         }
         return json_encode(self::$resp);
+    }
+
+    /**
+     * @param boolean $status
+     * @param string $msg
+     */
+    public static function SetStatusAndMsg(bool $status, string $msg = "业务错误")
+    {
+        self::SetStatus($status);
+        self::SetMsg($msg);
     }
 }

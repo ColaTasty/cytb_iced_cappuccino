@@ -1,6 +1,5 @@
 var _item_image_li = '<li><img src="[URL]" alt="已选图片"></li>';
 var _images = [];
-var _url_creator = window.URL || window.mozURL || window.webkitURL;
 var _img_modal = $("#img-modal");
 
 _img_modal.on("hidden.bs.modal", function () {
@@ -92,7 +91,7 @@ $("#uploader-box").on("click", function () {
             }
         },
         fail: function () {
-            alert("调用失败");
+            alert("调用失败，请刷新界面重试");
         },
         complete: function () {
             console.log("调用失败");
@@ -197,7 +196,6 @@ $("#submit").on("click", function () {
 /**
  * 上传图片
  */
-
 var _upload_image = function (next) {
     var images_files = [];
 
@@ -216,7 +214,7 @@ var _upload_image = function (next) {
                 }
             },
             fail: function () {
-                alert("上传失败");
+                alert("上传图片失败，请刷新页面重试");
             },
             complete:function () {}
         });
