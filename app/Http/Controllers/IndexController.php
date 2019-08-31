@@ -11,6 +11,7 @@ use App\WeChatAdmin;
 use App\WeChatAlertCount;
 use App\WeChatSessionToken;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class IndexController extends Controller
@@ -36,11 +37,15 @@ class IndexController extends Controller
 
     public function GetAdminToken($open_id)
     {
-
+        $token = md5(time() + $open_id);
+        Cache::tags(["token","admin",$open_id])->flush();
+        Cache::tags(["token","admin",$open_id])->put($token,$open_id,60);
+        return response($token);
     }
 
     public function AddAdmin(Request $request)
     {
+        return Cache::get($request->token);
         $operator_open_id = $request->operator_open_id;
         $open_id = $request->open_id;
         $level = $request->level;

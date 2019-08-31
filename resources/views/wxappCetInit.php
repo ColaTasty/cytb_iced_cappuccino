@@ -7,8 +7,8 @@
 use \App\CustomClasses\Utils\ResponseConstructor as RC;
 
 $config = [
-    "canUse" => true,
-    "msg" => "服务器大姨妈啦！\n请到官网查询!!"
+    "canUse" => false,
+    "msg" => "后台服务器大姨妈啦！\n请到官网查询!!"
 ];
 
 RC::SetData("config", $config);

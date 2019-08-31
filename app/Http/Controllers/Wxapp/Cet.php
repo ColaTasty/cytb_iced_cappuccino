@@ -60,7 +60,7 @@ class Cet
         $res = CetApi::CetGetVerifyImage($zkz);
         if ($res == false) {
             ResponseConstructor::SetStatus(false);
-            ResponseConstructor::SetMsg("验证码请求失败，请重试");
+            ResponseConstructor::SetMsg("验证码请求失败，时间未到");
             return ResponseConstructor::ResponseToClient(true);
         } else {
             ResponseConstructor::SetStatus(true);

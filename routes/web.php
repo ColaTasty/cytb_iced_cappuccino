@@ -18,19 +18,13 @@ Route::any("/index", "IndexController@index");
 Route::get("/laravel", "IndexController@laravel");
 Route::get("/get-active-token/{open_id}/{wechat_accountid?}", "IndexController@getActiveToken")->middleware('user.refresh.alter');
 Route::get("/get-admin-token/{open_id}", "IndexController@getActiveToken")->middleware('user.refresh.alter');
-Route::get("/add-admin/{operator_open_id}/{open_id}/{level}", "IndexController@AddAdmin")->middleware('user.refresh.alter');
+//Route::get("/add-admin/{operator_open_id}/{token}/{level}", "IndexController@AddAdmin")->middleware('user.refresh.alter');
+Route::get("/add-admin/{operator_open_id}/{token}{level}", "IndexController@AddAdmin")->middleware('user.refresh.alter');
 
 /**
  * 测试
  */
-Route::prefix("test")->group(function () {
-    Route::get("image", function (){
-        \App\CustomClasses\Utils\WechatApi::GetMediaTest(
-            3,
-            "lj_Q2HnBvx7Re12zY5AOgOKC9tfctFxehFpuxtMjAC2s9bpbUxE0RKsC4oqDW9cm"
-        );
-    });
-});
+Route::prefix("test")->group(function () {});
 
 /**
  * 微信小程序
@@ -69,6 +63,13 @@ Route::prefix("wechat")->group(function () {
     #region    查询录取通知书邮件
     Route::any("query-examination-mail/{ticket?}", "WeChatController@QueryExaminationMail");
     #endregion
+    #region    查询四六级
+    Route::prefix("cet")->group(function (){
+        Route::get(
+            "/", "WeChatCETController@Index"
+        );
+    });
+    #endregion
     #region    七夕活动
     Route::middleware(['qixi','user.session.token','user.check.alter'])->group(function () {
         Route::prefix("qixi")->group(function () {
@@ -76,19 +77,19 @@ Route::prefix("wechat")->group(function () {
                 "default-matching/{view_code?}", "WeChatQixiController@DefaultMatching"
             );
             Route::get(
-                "/start-matching", "WeChatQixiController@StartMatching"
+                "start-matching", "WeChatQixiController@StartMatching"
             );
             Route::get(
-                "/want-matching/{view_code}", "WeChatQixiController@WantMatching"
+                "want-matching/{view_code}", "WeChatQixiController@WantMatching"
             );
             Route::post(
-                "/submit-info", "WeChatQixiController@SubmitInfo"
+                "submit-info", "WeChatQixiController@SubmitInfo"
             );
             Route::get(
-                "/solve-feedback/{feedback_id?}", "WeChatQixiController@SolveFeedback"
+                "solve-feedback/{feedback_id?}", "WeChatQixiController@SolveFeedback"
             );
             Route::post(
-                "/set-status/{open_id}/{status}", "WeChatQixiController@SetStatus"
+                "set-status/{open_id}/{status}", "WeChatQixiController@SetStatus"
             );
             Route::get(
                 "/{active_token?}", "WeChatQixiController@Index"
@@ -103,4 +104,5 @@ Route::prefix("wechat")->group(function () {
         )->middleware('user.refresh.alter');
     });
     #endregion
+    Route::any("notice-no-wxapp", "WeChatController@NoticeNoWxapp");
 });

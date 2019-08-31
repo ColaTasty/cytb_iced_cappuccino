@@ -81,4 +81,8 @@ class WeChatController extends Controller
 
         return ResponseConstructor::ResponseToClient(true);
     }
+
+    public function NoticeNoWxapp(Request $request){
+        return view("wechat.notice",["message"=>"【城院贴吧小助手】开始无限期维护了，小程序功能会逐步重新上线公众号，敬请期待！"]);
+    }
 }

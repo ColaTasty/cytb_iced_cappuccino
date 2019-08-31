@@ -47,6 +47,9 @@ class CetApi
         $cookie = str_replace(" ", "", $cookie);
 
         // 解析图片地址
+        if (preg_match("/err/i",$body)){
+            return false;
+        }
         preg_match("/result\.imgs\(\"(.*)\"\);/i", $body, $img_url);
         $img_url = $img_url[1];
 

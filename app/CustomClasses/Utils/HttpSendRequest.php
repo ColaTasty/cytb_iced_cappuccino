@@ -148,8 +148,8 @@ class HttpSendRequest
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, 0);
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYPEER, 0);
         curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, 1);              // 使用自动跳转
-        //***最大等待60s获得响应***
-        curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, 60);
+        //***最大等待15s获得响应***
+        curl_setopt($this->curl, CURLOPT_CONNECTTIMEOUT, 15);
         $this->response = curl_exec($this->curl);
         $this->curl_info = curl_getinfo($this->curl);
         if (!$this->response)

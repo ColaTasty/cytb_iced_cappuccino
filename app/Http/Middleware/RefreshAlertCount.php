@@ -18,7 +18,7 @@ class RefreshAlertCount
     public function handle($request, Closure $next)
     {
         $open_id = session("open_id",null);
-        if (!isset($request->open_id) && empty($open_id)){
+        if (!isset($request->open_id) && !isset($request->operator_open_id) && empty($open_id)){
             ResponseConstructor::SetStatusAndMsg(false,"openId缺失 : OpenId not found");
             return ResponseConstructor::ResponseToClient(true);
         }
