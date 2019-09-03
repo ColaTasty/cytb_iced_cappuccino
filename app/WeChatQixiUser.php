@@ -40,6 +40,13 @@ class WeChatQixiUser extends Model
         }
     }
 
+    /**
+     * 直接上传图片，不经过微信media_id的过渡
+     * @param $open_id
+     * @param $image
+     * @return bool|int
+     * @throws \Exception
+     */
     public function SaveImage($open_id, $image)
     {
         $image_url = [];
@@ -99,6 +106,13 @@ class WeChatQixiUser extends Model
         }
     }
 
+    /**
+     * 从微信的media_id获取图片
+     * @param $open_id
+     * @param $image
+     * @return bool|int
+     * @throws \Exception
+     */
     public function SaveImageFromWeChat($open_id, $image)
     {
         $image_url = [];

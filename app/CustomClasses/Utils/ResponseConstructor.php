@@ -71,7 +71,7 @@ class ResponseConstructor
 
     /**
      * @param bool $auto_packaging
-     * @return false|\Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response|mixed|string
+     * @return false|mixed|string
      */
     public static function ResponseToClient(bool $auto_packaging = false)
     {
