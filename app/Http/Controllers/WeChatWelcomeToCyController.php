@@ -39,7 +39,7 @@ class WeChatWelcomeToCyController extends Controller
                 ResponseConstructor::SetStatusAndMsg(true,'提交成功，请提交朋友圈截图');
                 break;
             case 1:
-                ResponseConstructor::SetStatusAndMsg(false,'你已经提交过了，请提交朋友圈截图');
+                ResponseConstructor::SetStatusAndMsg(true,'你已经提交过了，请提交朋友圈截图');
                 break;
             case 2:
                 ResponseConstructor::SetStatusAndMsg(true,'你已经提交过信息了，祝你好运！');
