@@ -54,22 +54,30 @@ Route::prefix("wxapp")->group(function () {
  * 微信公众号
  */
 Route::prefix("wechat")->group(function () {
+    #region 主页
+    Route::any("/", "WeChatController@Index");
+    #endregion 主页
+
     #region    开发者网站授权
     Route::any("dev-auth", "WeChatController@WeChatDevAuth");
-    #endregion
+    #endregion 开发者网站授权-
+
     #region    请升级微信
     Route::any("please-update", "WeChatController@PleaseUpdate");
-    #endregion
+    #endregion 请升级微信
+
     #region    查询录取通知书邮件
     Route::any("query-examination-mail/{ticket?}", "WeChatController@QueryExaminationMail");
-    #endregion
+    #endregion 查询录取通知书邮件
+
     #region    查询四六级
     Route::prefix("cet")->group(function (){
         Route::get(
             "/", "WeChatCETController@Index"
         );
     });
-    #endregion
+    #endregion 查询四六级
+
     #region    七夕活动
     Route::middleware(['qixi','user.session.token','user.check.alter'])->group(function () {
         Route::prefix("qixi")->group(function () {
@@ -96,13 +104,24 @@ Route::prefix("wechat")->group(function () {
             );
         });
     });
-    #endregion
+    #endregion 七夕活动
+
     #region    七夕活动(不需验证token)
     Route::prefix("qixi")->group(function () {
         Route::get(
             "/feedback/{open_id}/{view_code}", "WeChatQixiController@Feedback"
         )->middleware('user.refresh.alter');
     });
-    #endregion
+    #endregion 七夕活动(不需验证token)
+
+    #region 小程序无限期维护
     Route::any("notice-no-wxapp", "WeChatController@NoticeNoWxapp");
+    #endregion 小程序无限期维护
+
+    #region 开学活动
+    Route::prefix("welcome-to-cy")->group(function (){
+        Route::post("submit-info","WeChatWelcomeToCyController@SubmitInfo");
+        Route::post("submit-image","WeChatWelcomeToCyController@SubmitImage");
+    });
+    #endregion 开学活动
 });

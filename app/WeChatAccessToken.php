@@ -63,7 +63,7 @@ class WeChatAccessToken extends Model
         );
 
         if (!empty($access_token)) {
-            return $res->access_token;
+            return $res->token;
         } else {
             return null;
         }
@@ -71,6 +71,7 @@ class WeChatAccessToken extends Model
 
     /**
      * 从微信API获取AccessToken
+     * 如果微擎失效了，请用此函数
      */
     private function SaveAccessToken($accountId)
     {

@@ -11,11 +11,12 @@ namespace App\CustomClasses\Utils;
 class ResponseConstructor
 {
     protected static $resp = [
-        "isOK" => false
+        'isOK' => false,
+        'err_code' => -1
     ];
 
     protected static $header = [
-        "content-type" => "application/json"
+        'content-type' => 'application/json'
     ];
 
     public static function SetResponseHeader(string $key, string $value)
@@ -51,7 +52,7 @@ class ResponseConstructor
      * @param string $key
      * @param $value
      */
-    public static function SetData(string $key,$value)
+    public static function SetData(string $key, $value)
     {
         self::$resp[$key] = $value;
     }
@@ -88,7 +89,7 @@ class ResponseConstructor
      * @param boolean $status
      * @param string $msg
      */
-    public static function SetStatusAndMsg(bool $status, string $msg = "业务错误")
+    public static function SetStatusAndMsg(bool $status, string $msg = '业务错误')
     {
         self::SetStatus($status);
         self::SetMsg($msg);

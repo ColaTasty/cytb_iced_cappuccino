@@ -55,11 +55,6 @@ class WeChatController extends Controller
         return view("wechat.queryExaminationMail.result", ["res" => $res]);
     }
 
-    public function LuckyDraw()
-    {
-        return response("Lucky Draw");
-    }
-
     public function GetJsConfig(Request $request)
     {
         if (!isset($request->url)) {
