@@ -71,6 +71,9 @@ class WeChatWelcomeToCy extends Model
         if (empty($user) && empty($user->wechat_id)) {
             return 3;
         }
+        if (!empty($user->screen_image)){
+            return 5;
+        }
         $user->screen_image = $publicUrl;
 
         if ($user->save()) {

@@ -43,7 +43,7 @@ class WeChatWelcomeToCyController extends Controller
                 ResponseConstructor::SetStatusAndMsg(true, '你已经提交过了，请提交朋友圈截图');
                 break;
             case 2:
-                ResponseConstructor::SetStatusAndMsg(true, '你已经提交过信息了，请按规则保留朋友圈至活动结束，祝你好运！');
+                ResponseConstructor::SetStatusAndMsg(true, '你已经在参与了，请按规则保留朋友圈至开奖，祝你好运！');
                 break;
             case 3:
                 ResponseConstructor::SetStatusAndMsg(false, '好像服务器出错了，请向城院小吧吧反馈');
@@ -87,6 +87,9 @@ class WeChatWelcomeToCyController extends Controller
                 break;
             case 4:
                 ResponseConstructor::SetStatusAndMsg(false, '未知数据，请向【城院贴吧机器人】添加并联系小吧吧微信');
+                break;
+            case 5:
+                ResponseConstructor::SetStatusAndMsg(true, '你已经在参与了，请按规则保留朋友圈至开奖，祝你好运！');
                 break;
             default:
                 ResponseConstructor::SetStatusAndMsg(false, '未知失败，请向【城院贴吧机器人】添加并联系小吧吧微信');
