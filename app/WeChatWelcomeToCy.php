@@ -31,7 +31,7 @@ class WeChatWelcomeToCy extends Model
     {
         $user = self::where('open_id', $open_id)->first();
         if (!empty($user)) {
-            if (empty($user->screen_iamge)) {
+            if (empty($user->screen_image)) {
                 return 1;
             } else {
                 return 2;
